@@ -13,6 +13,7 @@ import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
 import { applyPalette } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
+import { clearPaletteCache } from './paletteGen/getAutoPalette';
 
 // Initialization
 
@@ -127,6 +128,9 @@ function onLoad(img: HTMLImageElement): void {
   imageCanvas.width = w;
   imageCanvas.height = h;
   imageContext?.drawImage(img, 0, 0, w, h);
+
+  // Clear the cache of generated palettes
+  clearPaletteCache();
   applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
 }
 

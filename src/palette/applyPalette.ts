@@ -1,7 +1,7 @@
 import { Process } from '../process/Process';
-import { PaletteGenOptions, generatePalette } from '../paletteGen/PaletteGenerator';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
+import { getAutoPalette } from '../paletteGen/getAutoPalette';
 
 export function applyPalette(
   cvIn: HTMLCanvasElement,
@@ -18,24 +18,13 @@ export function applyPalette(
   const ctxOut = cvOut.getContext('2d');
   if (!ctxOut) throw new Error('Unable to get output context');
 
-  const dataIn = ctxIn.getImageData(0, 0, cvIn.width, cvIn.height);
-  if (!dataIn) throw new Error('Unable to get image data from context');
+  const imageData = ctxIn.getImageData(0, 0, cvIn.width, cvIn.height);
+  if (!imageData) throw new Error('Unable to get image data from context');
 
   // Special handling for certain palettes
-  if (palette.type === PaletteType.PAuto) {
-    const options: PaletteGenOptions = {
-      numColors: palette.data[0][0],
-      reservedLevel: palette.data[0][1],
-      levels: palette.data[0][2],
-      inclThresholdCoeff: palette.data[1][0]
-    };
-
-    // Replace the 'template' auto palette with the appropriate
-    // palette generated from the image
-    palette = generatePalette(options, dataIn);
-  }
+  if (palette.type === PaletteType.PAuto) palette = getAutoPalette(palette, imageData);
 
   // Convert image using the passed process
-  const dataOut = process.function(dataIn, palette);
-  ctxOut?.putImageData(dataOut, 0, 0);
+  process.function(imageData, palette);
+  ctxOut?.putImageData(imageData, 0, 0);
 }
