@@ -10,8 +10,9 @@ import { loadFile } from './utils';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
-import DitherStyle from './dithering/DitherStyle';
 import { applyPalette } from './palette/applyPalette';
+import Basic from './process/processes/Basic';
+import FloydSteinberg from './process/processes/FloydSteinberg';
 
 // Initialization
 
@@ -73,33 +74,38 @@ palettes.forEach(palette => {
 });
 paletteSelect.value = selectedPalette.name;
 
-let ditherStyle = DitherStyle.None;
-const ditherSelect = document.getElementById('ditherStyleSelect') as HTMLSelectElement;
+// Load processes and get the select element
+const processes = [
+  Basic,
+  FloydSteinberg
+];
+let selectedProcess = Basic;
+const procSelect = document.getElementById('processSelect') as HTMLSelectElement;
 
-// Ugly hacky way to list Enum values since TS provides no built-in for it
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const styles = Object.keys(DitherStyle).map(k => ((DitherStyle as any)[k] as DitherStyle));
-styles.forEach(style => {
+// Populate the process select element
+processes.forEach(process => {
   const option = document.createElement('option');
-  option.setAttribute('value', style);
-  option.text = style;
+  option.setAttribute('value', process.name);
+  option.text = process.name;
 
-  ditherSelect.appendChild(option);
+  procSelect.appendChild(option);
 });
 
 // Add change handlers for settings
 paletteSelect.addEventListener('change', function (ev: Event) {
-  selectedPalette = palettes.find(p =>
-    p.name === (ev.target as HTMLSelectElement).value
+  selectedPalette = palettes.find(pal =>
+    pal.name === (ev.target as HTMLSelectElement).value
   ) || selectedPalette;
 
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
 });
 
-ditherSelect.addEventListener('change', function (ev: Event) {
-  ditherStyle = (ev.target as HTMLSelectElement).value as DitherStyle;
+procSelect.addEventListener('change', function (ev: Event) {
+  selectedProcess = processes.find(proc =>
+    proc.name === (ev.target as HTMLSelectElement).value
+  ) || selectedProcess;
   
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
 });
 
 // Add file upload handling
@@ -121,7 +127,7 @@ function onLoad(img: HTMLImageElement): void {
   imageCanvas.width = w;
   imageCanvas.height = h;
   imageContext?.drawImage(img, 0, 0, w, h);
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
 }
 
 const fileInput = document.getElementById('fileInput') as HTMLInputElement;

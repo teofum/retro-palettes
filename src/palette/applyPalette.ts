@@ -1,16 +1,14 @@
-import DitherStyle from '../dithering/DitherStyle';
+import { Process } from '../process/Process';
 import { PaletteGenOptions, generatePalette } from '../paletteGen/PaletteGenerator';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
-import { paletteMap } from './paletteMap';
 
 export function applyPalette(
   cvIn: HTMLCanvasElement,
   cvOut: HTMLCanvasElement,
   palette: ColorPalette,
-  dither: DitherStyle
+  process: Process
 ): void {
-
   cvOut.width = cvIn.width;
   cvOut.height = cvIn.height;
 
@@ -20,8 +18,8 @@ export function applyPalette(
   const ctxOut = cvOut.getContext('2d');
   if (!ctxOut) throw new Error('Unable to get output context');
 
-  const imageData = ctxIn.getImageData(0, 0, cvIn.width, cvIn.height);
-  if (!imageData) throw new Error('Unable to get image data from context');
+  const dataIn = ctxIn.getImageData(0, 0, cvIn.width, cvIn.height);
+  if (!dataIn) throw new Error('Unable to get image data from context');
 
   // Special handling for certain palettes
   if (palette.type === PaletteType.PAuto) {
@@ -34,29 +32,10 @@ export function applyPalette(
 
     // Replace the 'template' auto palette with the appropriate
     // palette generated from the image
-    palette = generatePalette(options, imageData);
+    palette = generatePalette(options, dataIn);
   }
 
-  const size = imageData.width * imageData.height * 4;
-  const line = imageData.width * 4;
-  for (let i = 0; i < size; i += 4) {
-    const color = Array.from(imageData.data.slice(i, i + 4));
-    const mapped: number[] = paletteMap(color, palette);
-
-    for (let j = 0; j < 3; j++)
-      imageData.data[i + j] = mapped[j];
-
-    // Apply Floyd-Steinberg dithering if selected
-    if (dither === DitherStyle.FloydSteinberg) {
-      const error = color.map((ch, i) => ch - mapped[i]);
-      for (let j = 0; j < 3; j++) {
-        imageData.data[i + 4 + j] += error[j] * 7 / 16;
-        imageData.data[i + line - 4 + j] += error[j] * 3 / 16;
-        imageData.data[i + line + j] += error[j] * 5 / 16;
-        imageData.data[i + line + 4 + j] += error[j] * 1 / 16;
-      }
-    }
-  }
-
-  ctxOut?.putImageData(imageData, 0, 0);
+  // Convert image using the passed process
+  const dataOut = process.function(dataIn, palette);
+  ctxOut?.putImageData(dataOut, 0, 0);
 }
