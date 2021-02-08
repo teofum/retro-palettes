@@ -12,6 +12,7 @@
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-extra-semi": "off",
     "semi": ["error", "always"],
-    "eqeqeq": ["warn", "always"]
+    "eqeqeq": ["warn", "always"],
+    "quotes": ["warn", "single"]
   }
 }
