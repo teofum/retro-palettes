@@ -103,13 +103,19 @@ ditherSelect.addEventListener('change', function (ev: Event) {
 });
 
 // Add file upload handling
+const resizeInput = document.getElementById('resizeInput') as HTMLInputElement;
 function onLoad(img: HTMLImageElement): void {
   let w = img.width;
   let h = img.height;
 
-  if (w > 500) {
-    h = 500 * (h / w);
-    w = 500;
+  const maxSize = parseInt(resizeInput.value, 10);
+  if (w >= h && w > maxSize) {
+    h = maxSize * (h / w);
+    w = maxSize;
+  }
+  if (h > w && h > maxSize) {
+    w = maxSize * (w / h);
+    h = maxSize;
   }
 
   imageCanvas.width = w;
