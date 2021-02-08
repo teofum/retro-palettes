@@ -29,6 +29,10 @@ body {
   grid-template-columns: subgrid;
 }
 
+.controls-wide {
+  grid-column: span 2;
+}
+
 .canvas-container {
   position: relative;
 }

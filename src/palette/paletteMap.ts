@@ -1,15 +1,19 @@
-import { distance2 } from '../utils';
+import ColorDistanceFn from '../colorCompare/ColorCompareFn';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 
 // Default palette mapping
 // Uses a simple distance check
-function defPaletteMap(color: number[], palette: ColorPalette): number[] {
+function defPaletteMap(
+  color: number[],
+  palette: ColorPalette,
+  distFn: ColorDistanceFn
+): number[] {
   let closest: number[] = [];
 
   let dMin = Number.POSITIVE_INFINITY;
   palette.data.forEach(pColor => {
-    const dsq = distance2(color, pColor);
+    const dsq = distFn(color, pColor);
 
     if (dsq <= dMin) {
       closest = pColor;
@@ -32,11 +36,15 @@ function clampedRGBPaletteMap(color: number[], palette: ColorPalette): number[] 
   return clamped;
 }
 
-export function paletteMap(color: number[], palette: ColorPalette): number[] {
+export function paletteMap(
+  color: number[],
+  palette: ColorPalette,
+  distFn: ColorDistanceFn
+): number[] {
   switch (palette.type) {
     case PaletteType.PRGB:
       return clampedRGBPaletteMap(color, palette);
     default:
-      return defPaletteMap(color, palette);
+      return defPaletteMap(color, palette, distFn);
   }
 }

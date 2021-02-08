@@ -6,7 +6,7 @@ import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameboyG, GameboyW } from './palette/palettes/Gameboy';
 import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
-import { loadFile } from './utils';
+import { loadFile } from './utils/utils';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
@@ -14,6 +14,7 @@ import { applyPalette } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
+import { colDistLab, colDistRGB } from './colorCompare/ColorCompareFn';
 
 // Initialization
 
@@ -92,21 +93,24 @@ processes.forEach(process => {
   procSelect.appendChild(option);
 });
 
+const labCheckbox = document.getElementById('useLab') as HTMLInputElement;
+labCheckbox.addEventListener('change', function () { update(); });
+
 // Add change handlers for settings
 paletteSelect.addEventListener('change', function (ev: Event) {
   selectedPalette = palettes.find(pal =>
     pal.name === (ev.target as HTMLSelectElement).value
   ) || selectedPalette;
 
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
+  update();
 });
 
 procSelect.addEventListener('change', function (ev: Event) {
   selectedProcess = processes.find(proc =>
     proc.name === (ev.target as HTMLSelectElement).value
   ) || selectedProcess;
-  
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
+
+  update();
 });
 
 // Add file upload handling
@@ -131,12 +135,21 @@ function onLoad(img: HTMLImageElement): void {
 
   // Clear the cache of generated palettes
   clearPaletteCache();
-  applyPalette(imageCanvas, outputCanvas, selectedPalette, selectedProcess);
+  update();
 }
 
 const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 fileInput.addEventListener('change',
   function (ev: Event) { loadFile(ev).then(img => onLoad(img)); });
+
+// Define update function
+function update(): void {
+  applyPalette(
+    imageCanvas, outputCanvas,
+    selectedPalette,
+    selectedProcess,
+    labCheckbox.checked ? colDistLab : colDistRGB);
+}
 
 // Add click handler for view original button
 function toggleViewOriginal() {

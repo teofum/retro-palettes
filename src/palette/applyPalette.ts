@@ -2,12 +2,14 @@ import { Process } from '../process/Process';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 import { getAutoPalette } from '../paletteGen/getAutoPalette';
+import ColorDistanceFn from '../colorCompare/ColorCompareFn';
 
 export function applyPalette(
   cvIn: HTMLCanvasElement,
   cvOut: HTMLCanvasElement,
   palette: ColorPalette,
-  process: Process
+  process: Process,
+  distFn: ColorDistanceFn
 ): void {
   cvOut.width = cvIn.width;
   cvOut.height = cvIn.height;
@@ -25,6 +27,6 @@ export function applyPalette(
   if (palette.type === PaletteType.PAuto) palette = getAutoPalette(palette, imageData);
 
   // Convert image using the passed process
-  process.function(imageData, palette);
+  process.function(imageData, palette, distFn);
   ctxOut?.putImageData(imageData, 0, 0);
 }
