@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf8">
+  <title>Image Bit Depth</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div class="content">
+    <div class="options">
+      <div class="file-input">
+        <span>Choose a file</span>
+        <input type="file" id="fileInput" accept="image/png, image/jpeg">
+      </div>
+
+      <div class="controls">
+        <span>Palette </span>
+        <select name="palette" id="paletteSelect"></select>
+      </div>
+
+      <div class="controls">
+        <span>Dithering </span>
+        <select name="dithering" id="ditherStyleSelect"></select>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="applyFilters()">Apply</button>
+      <button id="toggleOriginal">View Original</button>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="canvasOriginal"></canvas>
+      <canvas id="canvasOutput"></canvas>
+    </div>
+  </div>
+
+  <script src="./js/main.js" type="module"></script>
+</body>
+
+</html>
