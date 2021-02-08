@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 export const RGB8: ColorPalette = {
   name: '8-color RGB (3-bit, 1bpc)',

@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 export const MonoW: ColorPalette = {
   name: 'Black/White (1-bit MC)',

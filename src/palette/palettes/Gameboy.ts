@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 export const GameboyG: ColorPalette = {
   name: 'Game Boy Green (2-bit MC)',

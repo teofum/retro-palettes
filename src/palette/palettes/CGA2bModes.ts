@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 export const CGAm4p0l: ColorPalette = {
   name: 'CGA Mode 4 Palette 0 (low)',

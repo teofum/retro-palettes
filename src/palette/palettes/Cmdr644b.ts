@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 const Cmdr644b: ColorPalette = {
   name: 'Commodore 64',

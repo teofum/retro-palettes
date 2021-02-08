@@ -1,16 +1,17 @@
-import { CGAm4p0h, CGAm4p0l, CGAm4p1h, CGAm4p1l, CGAm5h, CGAm5l } from "./palette/CGA2bModes";
-import CGA4bRGBI from "./palette/CGA4bRGBI";
-import Cmdr644b from "./palette/Cmdr644b";
-import Win4bRGBI from "./palette/Win4bRGBI";
-import Win20cEx from "./palette/Win20cEx";
-import ZX4bRGBI from "./palette/ZX4bRGBI";
-import { GameboyG, GameboyW } from "./palette/Gameboy";
-import { RGB256, RGB64, RGB8 } from "./palette/RGB";
-import { convertToPalette, loadFile } from "./utils";
-import Macintosh4b from "./palette/Macintosh4b";
-import { Auto16, Auto256, Auto64 } from "./palette/Auto";
-import { MonoA, MonoG, MonoW } from "./palette/Mono";
-import DitherStyle from "./DitherStyle";
+import { CGAm4p0h, CGAm4p0l, CGAm4p1h, CGAm4p1l, CGAm5h, CGAm5l } from './palette/palettes/CGA2bModes';
+import CGA4bRGBI from './palette/palettes/CGA4bRGBI';
+import Cmdr644b from './palette/palettes/Cmdr644b';
+import Win4bRGBI from './palette/palettes/Win4bRGBI';
+import Win20cEx from './palette/palettes/Win20cEx';
+import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
+import { GameboyG, GameboyW } from './palette/palettes/Gameboy';
+import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
+import { loadFile } from './utils';
+import Macintosh4b from './palette/palettes/Macintosh4b';
+import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
+import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
+import DitherStyle from './dithering/DitherStyle';
+import { applyPalette } from './palette/applyPalette';
 
 // Initialization
 
@@ -92,13 +93,13 @@ paletteSelect.addEventListener('change', function (ev: Event) {
     p.name === (ev.target as HTMLSelectElement).value
   ) || selectedPalette;
 
-  convertToPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
 });
 
 ditherSelect.addEventListener('change', function (ev: Event) {
   ditherStyle = (ev.target as HTMLSelectElement).value as DitherStyle;
   
-  convertToPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
 });
 
 // Add file upload handling
@@ -114,7 +115,7 @@ function onLoad(img: HTMLImageElement): void {
   imageCanvas.width = w;
   imageCanvas.height = h;
   imageContext?.drawImage(img, 0, 0, w, h);
-  convertToPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
+  applyPalette(imageCanvas, outputCanvas, selectedPalette, ditherStyle);
 }
 
 const fileInput = document.getElementById('fileInput') as HTMLInputElement;

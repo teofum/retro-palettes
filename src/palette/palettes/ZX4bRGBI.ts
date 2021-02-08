@@ -1,5 +1,5 @@
-import ColorPalette from "../ColorPalette";
-import PaletteType from "../PaletteGroups";
+import ColorPalette from '../ColorPalette';
+import PaletteType from '../PaletteGroups';
 
 const ZX4bRGBI: ColorPalette = {
   name: 'ZX Spectrum 4-bit RGBI',

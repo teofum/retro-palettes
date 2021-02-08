@@ -1,5 +1,10 @@
-import ColorPalette from "./ColorPalette";
-import PaletteType from "./PaletteGroups";
+import ColorPalette from '../palette/ColorPalette';
+import PaletteType from '../palette/PaletteGroups';
+import ColorNode from './ColorNode';
+import NodeLike from './NodeLike';
+
+// Sample every n pixels in the x and y axes (1/n^2 pixels total)
+const SUBSAMPLING = 2;
 
 export interface PaletteGenOptions {
   numColors: number;
@@ -8,43 +13,18 @@ export interface PaletteGenOptions {
   inclThresholdCoeff?: number;
 }
 
-interface NodeLike {
-  pixelCount: number;
-  //avgColor: number[];
-}
-
 interface CTE {
   index: number;
   level: number;
   node: NodeLike;
 }
 
-class ColorNode implements NodeLike {
-  private colors: number[][] = [];
-  private pixels: number = 0;
-
-  public get pixelCount(): number { return this.pixels; }
-  public get avgColor(): number[] {
-    const sum = [0, 0, 0];
-    for (let i = 0; i < this.colors.length; i++)
-      for (let j = 0; j < 3; j++) sum[j] += this.colors[i][j];
-
-    return sum.map(v => v / this.colors.length);
-  }
-
-  public addColor(color: number[]): void {
-    // If the specific color isn't in the list, add it
-    // Either way, increase the pixel count by one
-    if (!this.colors.includes(color)) this.colors.push(color);
-    this.pixels++;
-  }
-}
-
 function makeTree(levels: number): ColorNode[] {
   return Array.from({ length: Math.pow(8, levels) }, () => new ColorNode());
 }
 
-export class ColorOctree {
+// Octree-based color quantizer
+class PaletteGenerator {
   // Flattened tree
   private levels: number;
   private reservedLevel: number;
@@ -271,13 +251,21 @@ export class ColorOctree {
   }
 }
 
-export function getPalette(opts: PaletteGenOptions, img: ImageData): ColorPalette {
-  const octree = new ColorOctree(opts);
+export function generatePalette(
+  opts: PaletteGenOptions,
+  img: ImageData
+): ColorPalette {
+  const octree = new PaletteGenerator(opts);
 
   const size = img.width * img.height * 4;
   for (let i = 0; i < size; i += 4) {
-    const color = Array.from(img.data.slice(i, i + 4));
-    octree.addColor(color);
+    const y = Math.floor(i / 4 / img.width);
+    const x = Math.floor(i / 4 % img.width);
+
+    if (x % SUBSAMPLING === 0 && y % SUBSAMPLING === 0) {
+      const color = Array.from(img.data.slice(i, i + 4));
+      octree.addColor(color);
+    }
   }
 
   const colors = octree.getPalette();
