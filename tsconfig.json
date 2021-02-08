@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/js",
+    "outDir": "js",
     "strict": true,
     "target": "ES2015",
     "module": "ES6"

@@ -16,7 +16,7 @@ module.exports = {
   },
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'js'),
+    path: path.resolve(__dirname, 'dist/js'),
   },
   //mode: 'development',
   //devtool: 'eval-source-map'
