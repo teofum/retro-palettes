@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../../colorCompare/ColorCompareFn';
+import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
 import ColorPalette from '../../palette/ColorPalette';
 import { paletteMap } from '../../palette/paletteMap';
 import { Process, ProcessFn } from '../Process';

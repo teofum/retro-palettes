@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../colorCompare/ColorCompareFn';
+import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 

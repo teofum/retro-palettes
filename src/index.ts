@@ -14,7 +14,7 @@ import { applyPalette } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
-import { colDistLab, colDistRGB } from './colorCompare/ColorCompareFn';
+import { colDistLab, colDistRGB } from './colorDistance/ColorDistanceFn';
 
 // Initialization
 

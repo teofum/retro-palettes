@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../colorCompare/ColorCompareFn';
+import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
 import ColorPalette from '../palette/ColorPalette';
 
 export type ProcessFn = (

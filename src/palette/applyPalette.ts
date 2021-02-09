@@ -2,7 +2,7 @@ import { Process } from '../process/Process';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 import { getAutoPalette } from '../paletteGen/getAutoPalette';
-import ColorDistanceFn from '../colorCompare/ColorCompareFn';
+import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
 
 export function applyPalette(
   cvIn: HTMLCanvasElement,
