@@ -35,6 +35,16 @@
         <input type="checkbox" name="useLab" id="useLab" class="wide-control">
         <label for="useLab">Use CIELab color space</label>
       </div>
+
+      <div class="controls-wide">
+        <input type="checkbox" name="allowSlow" id="allowSlow" class="wide-control">
+        <label for="allowSlow">No palette/process restrictions</label>
+      </div>
+    </div>
+
+    <div class="slow-warning" id="slowWarning" style="display: none;">
+      Some palette and process combinations are disabled by default for performance reasons.
+      Using these options may result in extremely long processing times with large images.
     </div>
 
     <div class="buttons">

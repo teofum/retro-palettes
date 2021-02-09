@@ -37,6 +37,7 @@ const processFloydSteinberg: ProcessFn = (
 const FloydSteinberg: Process = {
   id: 'ProcFloydSteinberg',
   name: 'Floyd–Steinberg',
+  maxAllowedPaletteSize: 65536,
   function: processFloydSteinberg
 };
 

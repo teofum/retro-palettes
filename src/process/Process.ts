@@ -15,6 +15,7 @@ export type ProcessFn = (
 export interface Process {
   id: string;
   name: string;
+  maxAllowedPaletteSize: number;
   function: ProcessFn;
 }
 

@@ -14,9 +14,9 @@ import { applyPaletteAsync } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
-import { colDistLab, colDistRGB } from './colorDistance/ColorDistanceFn';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
 import ProcessWorker from './process/ProcessWorker';
+import { paletteSize } from './palette/ColorPalette';
 
 // Initialization
 
@@ -27,13 +27,23 @@ const imageContext = imageCanvas.getContext('2d');
 const outputCanvas = document.getElementById('canvasOutput') as HTMLCanvasElement;
 const outputContext = outputCanvas.getContext('2d');
 
+const allowSlow = document.getElementById('allowSlow') as HTMLInputElement;
+const slowWarning = document.getElementById('slowWarning') as HTMLElement;
+allowSlow.addEventListener('change', function () {
+  allowSlow.checked ?
+    slowWarning.style.removeProperty('display') :
+    slowWarning.style.setProperty('display', 'none');
+  
+  updateEnabledProcs();
+  updateEnabledPalettes();
+});
+
 // Create process worker
 const procWorker = new ProcessWorker();
 procWorker.onfinish = (result: ImageData) => outputContext?.putImageData(result, 0, 0);
 procWorker.onprogress = (prog: { current: number, total: number, partial?: ImageData }) => {
-  const processed = prog.current / 4 / imageCanvas.width;
-  const total = prog.total / 4 / imageCanvas.width;
-  console.log(`Processed ${processed}/${total} lines`);
+  //const processed = prog.current / 4 / imageCanvas.width;
+  //const total = prog.total / 4 / imageCanvas.width;
 
   if (prog.partial) outputContext?.putImageData(prog.partial, 0, 0);
 };
@@ -118,6 +128,7 @@ paletteSelect.addEventListener('change', function (ev: Event) {
     pal.name === (ev.target as HTMLSelectElement).value
   ) || selectedPalette;
 
+  updateEnabledProcs();
   update();
 });
 
@@ -126,6 +137,7 @@ procSelect.addEventListener('change', function (ev: Event) {
     proc.name === (ev.target as HTMLSelectElement).value
   ) || selectedProcess;
 
+  updateEnabledPalettes();
   update();
 });
 
@@ -179,3 +191,27 @@ function toggleViewOriginal() {
 
 const toggleBtn = document.getElementById('toggleOriginal') as HTMLButtonElement;
 toggleBtn.addEventListener('click', toggleViewOriginal);
+
+function updateEnabledProcs(): void {
+  // Disable slow processes for large palettes
+  const procOpts = procSelect.children;
+  for (let i = 0; i < procOpts.length; i++) {
+    const option = procOpts[i] as HTMLOptionElement;
+    const process = processes.find(proc => proc.name === option.value);
+    if (process) {
+      option.disabled = !allowSlow.checked && process.maxAllowedPaletteSize < paletteSize(selectedPalette);
+    }
+  }
+}
+
+function updateEnabledPalettes(): void {
+  // Disable too large palettes
+  const paletteOpts = paletteSelect.getElementsByTagName('option');
+  for (let i = 0; i < paletteOpts.length; i++) {
+    const option = paletteOpts[i] as HTMLOptionElement;
+    const palette = palettes.find(pal => pal.name === option.value);
+    if (palette) {
+      option.disabled = !allowSlow.checked && selectedProcess.maxAllowedPaletteSize < paletteSize(palette);
+    }
+  }
+}

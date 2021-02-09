@@ -28,6 +28,7 @@ const processBasic: ProcessFn = (
 const Basic: Process = {
   id: 'ProcBasic',
   name: 'Basic (no dithering)',
+  maxAllowedPaletteSize: 65536,
   function: processBasic
 };
 

@@ -4,7 +4,7 @@ enum PaletteType {
   P4BitIndexed = '4-bit (16 color) Indexed',
   PMono = 'Monochrome',
   PRGB = 'RGB',
-  PAuto = 'Other',
+  PAuto = 'Optimized (Auto)',
   POther = 'Other'
 }
 
