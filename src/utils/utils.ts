@@ -1,10 +1,10 @@
+import ColorPalette from '../palette/ColorPalette';
+import PaletteType from '../palette/PaletteGroups';
+
 // General utility functions
 
 export const vec3distance = (a: number[], b: number[]): number => {
-  let d = 0;
-  for (let i = 0; i < 3; i++)
-    d += (a[i] - b[i]) * (a[i] - b[i]);
-  return d;
+  return (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]) + (a[2] - b[2]) * (a[2] - b[2]);
 };
 
 export const loadFile = (e: Event): Promise<HTMLImageElement> => {
@@ -18,4 +18,30 @@ export const loadFile = (e: Event): Promise<HTMLImageElement> => {
       img.src = URL.createObjectURL(file);
     } else reject();
   });
+};
+
+export const expandRGBPalette = (palette: ColorPalette): ColorPalette => {
+  if (palette.type !== PaletteType.PRGB) throw new Error('Not an RGB palette');
+
+  const levels = palette.data[0].map(bits => Math.pow(2, bits));
+  const expanded: ColorPalette = {
+    name: 'EXPANDED_RGB',
+    type: PaletteType.POther,
+    useAlpha: false,
+    data: []
+  };
+
+  for (let r = 0; r < levels[0]; r++)
+    for (let g = 0; g < levels[1]; g++)
+      for (let b = 0; b < levels[2]; b++) {
+        const segments = [r, g, b];
+        const clamped = [r, g, b];
+
+        for (let i = 0; i < 3; i++)
+          clamped[i] = segments[i] * (255 / (levels[i] - 1));
+
+        expanded.data.push(clamped);
+      }
+    
+  return expanded;
 };

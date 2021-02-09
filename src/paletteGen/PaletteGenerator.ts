@@ -259,8 +259,8 @@ export function generatePalette(
 
   const size = img.width * img.height * 4;
   for (let i = 0; i < size; i += 4) {
-    const y = Math.floor(i / 4 / img.width);
-    const x = Math.floor(i / 4 % img.width);
+    const y = ~~(i / 4 / img.width);
+    const x = ~~(i / 4 % img.width);
 
     if (x % SUBSAMPLING === 0 && y % SUBSAMPLING === 0) {
       const color = Array.from(img.data.slice(i, i + 4));

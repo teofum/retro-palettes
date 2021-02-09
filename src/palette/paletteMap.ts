@@ -29,7 +29,7 @@ function clampedRGBPaletteMap(color: number[], palette: ColorPalette): number[] 
   const clamped = [...color];
 
   for (let i = 0; i < 3; i++) {
-    const segment = Math.floor(color[i] / (256 / levels[i]));
+    const segment = ~~(color[i] / (256 / levels[i]));
     clamped[i] = segment * (255 / (levels[i] - 1));
   }
 

@@ -15,6 +15,7 @@ import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
 import { colDistLab, colDistRGB } from './colorDistance/ColorDistanceFn';
+import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
 
 // Initialization
 
@@ -79,7 +80,9 @@ paletteSelect.value = selectedPalette.name;
 // Load processes and get the select element
 const processes = [
   Basic,
-  FloydSteinberg
+  FloydSteinberg,
+  BayerLikeFast,
+  BayerLike
 ];
 let selectedProcess = Basic;
 const procSelect = document.getElementById('processSelect') as HTMLSelectElement;
