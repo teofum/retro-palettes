@@ -40,7 +40,11 @@ allowSlow.addEventListener('change', function () {
 
 // Create process worker
 const procWorker = new ProcessWorker();
-procWorker.onfinish = (result: ImageData) => outputContext?.putImageData(result, 0, 0);
+procWorker.onfinish = (result: ImageData) => {
+  outputContext?.putImageData(result, 0, 0);
+  outputCanvas.classList.add('flash-anim');
+};
+
 procWorker.onprogress = (prog: { current: number, total: number, partial?: ImageData }) => {
   //const processed = prog.current / 4 / imageCanvas.width;
   //const total = prog.total / 4 / imageCanvas.width;
@@ -174,6 +178,7 @@ fileInput.addEventListener('change',
 function update(): void {
   if (!procWorker.ready) return;
 
+  outputCanvas.classList.remove('flash-anim');
   applyPaletteAsync(
     imageCanvas, outputCanvas,
     selectedPalette,

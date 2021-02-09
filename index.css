@@ -64,3 +64,16 @@ body {
 #canvasOutput.clip {
   clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
 }
+
+.flash-anim {
+  animation: 350ms ease-out 0s 1 normal forwards running flash;
+}
+
+@keyframes flash {
+  0% {
+    filter: contrast(10%) brightness(1.35);
+  }
+  100% {
+    filter: contrast(100%) brightness(1);
+  }
+}
