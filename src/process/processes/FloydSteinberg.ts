@@ -2,11 +2,13 @@ import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
 import ColorPalette from '../../palette/ColorPalette';
 import { paletteMap } from '../../palette/paletteMap';
 import { Process, ProcessFn } from '../Process';
+import { ProgressFn } from '../ProcessWorker';
 
 const processFloydSteinberg: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
-  distFn: ColorDistanceFn
+  distFn: ColorDistanceFn,
+  cbProgress: ProgressFn | null
 ) => {
   const size = dataIn.width * dataIn.height * 4;
   const line = dataIn.width * 4;
@@ -25,12 +27,15 @@ const processFloydSteinberg: ProcessFn = (
       dataIn.data[i + line + j] += error[j] * 5 / 16;
       dataIn.data[i + line + 4 + j] += error[j] * 1 / 16;
     }
+    
+    if (i % line === 0 && cbProgress) cbProgress(i, size, dataIn); 
   }
 
   return dataIn;
 };
 
 const FloydSteinberg: Process = {
+  id: 'ProcFloydSteinberg',
   name: 'Floyd–Steinberg',
   function: processFloydSteinberg
 };

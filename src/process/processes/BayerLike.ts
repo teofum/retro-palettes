@@ -3,6 +3,7 @@ import ColorPalette from '../../palette/ColorPalette';
 import PaletteType from '../../palette/PaletteGroups';
 import { expandRGBPalette } from '../../utils/utils';
 import { Process, ProcessFn } from '../Process';
+import { ProgressFn } from '../ProcessWorker';
 
 // 8x8 threshold map
 const bayerMap = [
@@ -37,7 +38,8 @@ function processBayer(fast: boolean = true): ProcessFn {
   return (
     dataIn: ImageData,
     palette: ColorPalette,
-    distFn: ColorDistanceFn
+    distFn: ColorDistanceFn,
+    cbProgress: ProgressFn | null
   ) => {
     // Expand an RGB palette into a fixed-color palette
     // in order for the algorithm to work
@@ -46,8 +48,6 @@ function processBayer(fast: boolean = true): ProcessFn {
 
     const size = dataIn.width * dataIn.height * 4;
     const line = dataIn.width * 4;
-
-    const debug: ColorMix[] = [];
 
     // Pre-calculate (weighted) distance between all permutations of two colors
     // in the given palette, this saves us a few million distance calculations
@@ -126,7 +126,7 @@ function processBayer(fast: boolean = true): ProcessFn {
           bestMix.color2[j] :
           bestMix.color1[j];
 
-      debug.push(bestMix);
+      if (i % line === 0 && cbProgress) cbProgress(i, size, dataIn);
     }
 
     return dataIn;
@@ -134,11 +134,13 @@ function processBayer(fast: boolean = true): ProcessFn {
 }
 
 export const BayerLikeFast: Process = {
+  id: 'ProcBayerLikeFast',
   name: 'Ordered (Bayer-like) – Fast',
   function: processBayer()
 };
 
 export const BayerLike: Process = {
+  id: 'ProcBayerLikeThorough',
   name: 'Ordered (Bayer-like) – Precise (!SLOW!)',
   function: processBayer(false)
 };

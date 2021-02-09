@@ -30,4 +30,14 @@ export function colDistLab(color1: number[], color2: number[]): number {
   return vec3distance(lab1, lab2);
 }
 
+export const getColorDistanceFnById = (id: string): ColorDistanceFn => {
+  switch (id) {
+    case 'cdLab':
+      return colDistLab;
+    case 'cdRGB':
+    default:
+      return colDistRGB;
+  }
+};
+
 export default ColorDistanceFn;

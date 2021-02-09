@@ -10,12 +10,13 @@ import { loadFile } from './utils/utils';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
-import { applyPalette } from './palette/applyPalette';
+import { applyPaletteAsync } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
 import { colDistLab, colDistRGB } from './colorDistance/ColorDistanceFn';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
+import ProcessWorker from './process/ProcessWorker';
 
 // Initialization
 
@@ -24,6 +25,18 @@ const imageCanvas = document.getElementById('canvasOriginal') as HTMLCanvasEleme
 const imageContext = imageCanvas.getContext('2d');
 
 const outputCanvas = document.getElementById('canvasOutput') as HTMLCanvasElement;
+const outputContext = outputCanvas.getContext('2d');
+
+// Create process worker
+const procWorker = new ProcessWorker();
+procWorker.onfinish = (result: ImageData) => outputContext?.putImageData(result, 0, 0);
+procWorker.onprogress = (prog: { current: number, total: number, partial?: ImageData }) => {
+  const processed = prog.current / 4 / imageCanvas.width;
+  const total = prog.total / 4 / imageCanvas.width;
+  console.log(`Processed ${processed}/${total} lines`);
+
+  if (prog.partial) outputContext?.putImageData(prog.partial, 0, 0);
+};
 
 // Load palette data and get the select element
 const palettes = [
@@ -147,11 +160,14 @@ fileInput.addEventListener('change',
 
 // Define update function
 function update(): void {
-  applyPalette(
+  if (!procWorker.ready) return;
+
+  applyPaletteAsync(
     imageCanvas, outputCanvas,
     selectedPalette,
     selectedProcess,
-    labCheckbox.checked ? colDistLab : colDistRGB);
+    labCheckbox.checked ? 'cdLab' : 'cdRGB',
+    procWorker);
 }
 
 // Add click handler for view original button
