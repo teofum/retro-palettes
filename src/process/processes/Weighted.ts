@@ -21,28 +21,27 @@ const processWeightedColormap: ProcessFn = (
   distFn: ColorDistanceFn,
   cbProgress: ProgressFn | null
 ) => {
+  const gamma = 2.2;
+  const invGamma = 1 / gamma;
+
   const size = dataIn.width * dataIn.height * 4;
   const line = dataIn.width * 4;
 
   const candidates: number[] = [];
-  let color: number[], pColor: number[];
+  let color: number[], gColor: number[];
   let colorSum: number[], avgWithCandidate: number[];
 
-  let DEBUG_ITERATIONS = 0;
-  let DEBUG_AVG_ITERATIONS = 0;
-
-  // Precalculate luminance table
+  // Precalculate luminance table and gamma-corrected palette
   const luma = palette.data.map(color => color[0] * 299 + color[0] * 587 + color[0] * 114);
+  const gPalette = palette.data.map(color => color.map(ch => Math.pow(ch / 255, gamma)));
 
   for (let i = 0; i < size; i += 4) {
     color = Array.from(dataIn.data.slice(i, i + 4));
     const x = (i % line) / 4;
     const y = ~~(i / line);
 
-    DEBUG_AVG_ITERATIONS += DEBUG_ITERATIONS;
-    DEBUG_ITERATIONS = 0;
     candidates.splice(0); // Colors that may be used, weighted by repetition
-    colorSum = [0, 0, 0]; // Accumulating sum of all candidates
+    colorSum = [0, 0, 0]; // Accumulating sum of all candidates, gamma corrected
     while (candidates.length < 16) {
       let candidate = 0; // Candidate to add
       let weight = 1;
@@ -53,15 +52,15 @@ const processWeightedColormap: ProcessFn = (
 
       // Pick best color in palette as new candidate
       for (let p = 0; p < palette.data.length; p++) {
-        pColor = palette.data[p];
+        // pColor = palette.data[p];
+        gColor = gPalette[p];
 
         for (let add = 1; add <= maxWeight; add *= 2) {
-          // Sum if the candidate was added with its current weight
+          // Sum if the candidate was added with its current weight (gamma -> standard)
           avgWithCandidate = colorSum.map((v, i) =>
-            (v + pColor[i] * add) / (candidates.length + add));
+            Math.pow((v + gColor[i] * add) / (candidates.length + add), invGamma) * 255);
 
           // Error with this candidate and weight
-          DEBUG_ITERATIONS++;
           const error = distFn(avgWithCandidate, color);
           if (error < minError) {
             weight = add;
@@ -72,7 +71,7 @@ const processWeightedColormap: ProcessFn = (
       }
 
       for (let j = 0; j < weight; j++) candidates.push(candidate);
-      colorSum = colorSum.map((ch, i) => ch + palette.data[candidate][i] * weight);
+      colorSum = colorSum.map((ch, i) => ch + gPalette[candidate][i] * weight);
     }
     candidates.sort((a, b) => luma[a] - luma[b]);
     const index = ~~(threshold[(x % 8) + (y % 8) * 8] * candidates.length);
@@ -83,7 +82,6 @@ const processWeightedColormap: ProcessFn = (
     if (i % (4 * line) === 0 && cbProgress) cbProgress(i, size, dataIn);
   }
 
-  console.log(`${DEBUG_AVG_ITERATIONS / (size / 4)} avg dist calls`);
   return dataIn;
 };
 
