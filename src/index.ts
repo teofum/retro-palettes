@@ -6,26 +6,24 @@ import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameboyG, GameboyW } from './palette/palettes/Gameboy';
 import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
-import { loadFile } from './utils/utils';
+import { loadFile, paletteSize } from './utils/utils';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
-import { applyPaletteAsync } from './palette/applyPalette';
+import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
-import ProcessWorker from './process/ProcessWorker';
-import { paletteSize } from './palette/ColorPalette';
 
-// Initialization
+// ================================================================================================ \\
+// Initialization ================================================================================== \\
 
 // Get both canvas elements and contexts
 const imageCanvas = document.getElementById('canvasOriginal') as HTMLCanvasElement;
 const imageContext = imageCanvas.getContext('2d');
 
 const outputCanvas = document.getElementById('canvasOutput') as HTMLCanvasElement;
-const outputContext = outputCanvas.getContext('2d');
 
 const allowSlow = document.getElementById('allowSlow') as HTMLInputElement;
 const slowWarning = document.getElementById('slowWarning') as HTMLElement;
@@ -37,20 +35,6 @@ allowSlow.addEventListener('change', function () {
   updateEnabledProcs();
   updateEnabledPalettes();
 });
-
-// Create process worker
-const procWorker = new ProcessWorker();
-procWorker.onfinish = (result: ImageData) => {
-  outputContext?.putImageData(result, 0, 0);
-  outputCanvas.classList.add('flash-anim');
-};
-
-procWorker.onprogress = (prog: { current: number, total: number, partial?: ImageData }) => {
-  //const processed = prog.current / 4 / imageCanvas.width;
-  //const total = prog.total / 4 / imageCanvas.width;
-
-  if (prog.partial) outputContext?.putImageData(prog.partial, 0, 0);
-};
 
 // Load palette data and get the select element
 const palettes = [
@@ -174,19 +158,6 @@ const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 fileInput.addEventListener('change',
   function (ev: Event) { loadFile(ev).then(img => onLoad(img)); });
 
-// Define update function
-function update(): void {
-  if (!procWorker.ready) return;
-
-  outputCanvas.classList.remove('flash-anim');
-  applyPaletteAsync(
-    imageCanvas, outputCanvas,
-    selectedPalette,
-    selectedProcess,
-    labCheckbox.checked ? 'cdLab' : 'cdRGB',
-    procWorker);
-}
-
 // Add click handler for view original button
 function toggleViewOriginal() {
   outputCanvas.classList.contains('clip') ?
@@ -196,6 +167,69 @@ function toggleViewOriginal() {
 
 const toggleBtn = document.getElementById('toggleOriginal') as HTMLButtonElement;
 toggleBtn.addEventListener('click', toggleViewOriginal);
+
+// Show/hide advanced options
+function toggleAdvOptions() {
+  const visible = getComputedStyle(advancedOptDiv).getPropertyValue('display') !== 'none';
+  visible ?
+    advancedOptDiv.style.setProperty('display', 'none') :
+    advancedOptDiv.style.removeProperty('display');
+  toggleAdvanced.innerHTML = `${visible ? 'Show' : 'Hide'} advanced options`;
+}
+
+const advancedOptDiv = document.getElementById('advancedOptions') as HTMLElement;
+const toggleAdvanced = document.getElementById('toggleAdvanced') as HTMLButtonElement;
+toggleAdvanced.addEventListener('click', toggleAdvOptions);
+
+// Thread options handling
+const useThreads = document.getElementById('useThreads') as HTMLInputElement;
+const autoThreads = document.getElementById('threadModeAuto') as HTMLInputElement;
+const manualThreads = document.getElementById('threadModeManual') as HTMLInputElement;
+const threadCount = document.getElementById('threadCount') as HTMLInputElement;
+threadCount.value = '2';
+threadCount.min = '1';
+threadCount.max = threadsAvailable.toString();
+
+function threadOptHandler() {
+  autoThreads.disabled = !useThreads.checked;
+  manualThreads.disabled = !useThreads.checked;
+  threadCount.disabled = !useThreads.checked || !manualThreads.checked;
+}
+
+useThreads.addEventListener('change', threadOptHandler);
+autoThreads.addEventListener('change', threadOptHandler);
+manualThreads.addEventListener('change', threadOptHandler);
+threadCount.addEventListener('change', threadOptHandler);
+
+// Stop button
+const btnStop = document.getElementById('abort') as HTMLButtonElement;
+btnStop.addEventListener('click', () => {
+  terminateAllWorkers();
+  btnStop.disabled = true;
+});
+
+// ================================================================================================ \\
+// Action functions ================================================================================ \\
+
+function update(): void {
+  outputCanvas.classList.remove('flash-anim');
+
+  const threads = !useThreads.checked ? 1 :
+    (autoThreads.checked ? 'auto' :
+      parseInt(threadCount.value, 10));
+
+  btnStop.disabled = false;
+  processImageAsync(
+    imageCanvas, outputCanvas,
+    selectedPalette,
+    selectedProcess,
+    labCheckbox.checked ? 'cdLab' : 'cdRGB',
+    threads
+  ).then(() => {
+    outputCanvas.classList.add('flash-anim');
+    btnStop.disabled = true;
+  });
+}
 
 function updateEnabledProcs(): void {
   // Disable slow processes for large palettes

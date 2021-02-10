@@ -126,7 +126,7 @@ function processBayer(fast: boolean = true): ProcessFn {
           bestMix.color2[j] :
           bestMix.color1[j];
 
-      if (i % line === 0 && cbProgress) cbProgress(i, size, dataIn);
+      if (i % (line * 4) === 0 && cbProgress) cbProgress(i, size, dataIn);
     }
 
     return dataIn;
@@ -136,13 +136,19 @@ function processBayer(fast: boolean = true): ProcessFn {
 export const BayerLikeFast: Process = {
   id: 'ProcBayerLikeFast',
   name: 'Ordered (Bayer-like) – Fast',
-  maxAllowedPaletteSize: 64,
-  function: processBayer()
+  procFn: processBayer(),
+  
+  maxAllowedPaletteSize: 192,
+  supportsMultipleThreads: true,
+  complexity: (n) => (n * n / 2) // O(n²/2)
 };
 
 export const BayerLike: Process = {
   id: 'ProcBayerLikeThorough',
-  name: 'Ordered (Bayer-like) – Precise (!SLOW!)',
-  maxAllowedPaletteSize: 16,
-  function: processBayer(false)
+  name: 'Ordered (Bayer-like) – High Quality',
+  procFn: processBayer(false),
+  
+  maxAllowedPaletteSize: 24,
+  supportsMultipleThreads: true,
+  complexity: (n) => (n * n * 32) // O(n²/2 * 64)
 };

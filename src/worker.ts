@@ -21,7 +21,7 @@ enum ProcessEvent {
   Error
 }
 
-type ProgressFn = ((current: number, total: number) => void);
+type ProgressFn = ((current: number, total: number, partial?: ImageData) => void);
 
 const reportProgress: ProgressFn = (current: number, total: number, partial?: ImageData) => {
   ctx.postMessage({ msg: ProcessEvent.Progress, params: { current, total, partial } });
@@ -39,7 +39,11 @@ ctx.addEventListener('message', (ev: MessageEvent) => {
   const process = getProcessById(msg.procId);
   if (process) {
     const distFn = getColorDistanceFnById(msg.distFnId);
-    process.function(msg.dataIn, palette, distFn, reportProgress);
+    process.procFn(msg.dataIn, palette, distFn, reportProgress);
     ctx.postMessage({ msg: ProcessEvent.Done, params: { result: msg.dataIn } });
-  } else ctx.postMessage({ msg: ProcessEvent.Error, params: { error: 'bad procId' } });
+    self.close();
+  } else {
+    ctx.postMessage({ msg: ProcessEvent.Error, params: { error: 'bad procId' } });
+    self.close();
+  }
 });

@@ -28,7 +28,7 @@ const processFloydSteinberg: ProcessFn = (
       dataIn.data[i + line + 4 + j] += error[j] * 1 / 16;
     }
     
-    if (i % line === 0 && cbProgress) cbProgress(i, size, dataIn); 
+    if (i % (4 * line) === 0 && cbProgress) cbProgress(i, size, dataIn); 
   }
 
   return dataIn;
@@ -37,8 +37,11 @@ const processFloydSteinberg: ProcessFn = (
 const FloydSteinberg: Process = {
   id: 'ProcFloydSteinberg',
   name: 'Floyd–Steinberg',
+  procFn: processFloydSteinberg,
+  
   maxAllowedPaletteSize: 65536,
-  function: processFloydSteinberg
+  supportsMultipleThreads: false,
+  complexity: (n) => n
 };
 
 export default FloydSteinberg;

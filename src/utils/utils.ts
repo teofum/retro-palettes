@@ -1,5 +1,6 @@
 import ColorPalette from '../palette/ColorPalette';
 import PaletteType from '../palette/PaletteGroups';
+import { Process } from '../process/Process';
 
 // General utility functions
 
@@ -44,4 +45,19 @@ export const expandRGBPalette = (palette: ColorPalette): ColorPalette => {
       }
     
   return expanded;
+};
+
+export const paletteSize = (pal: ColorPalette): number => {
+  switch(pal.type) {
+    case PaletteType.PRGB:
+      return Math.pow(2, pal.data[0][0]) * Math.pow(2, pal.data[0][1]) * Math.pow(2, pal.data[0][2]);
+    case PaletteType.PAuto:
+      return pal.data[0][0];
+    default:
+      return pal.data.length;
+  }
+};
+
+export const getComplexityRating = (process: Process, palette: ColorPalette): number => {
+  return process.complexity(paletteSize(palette));
 };

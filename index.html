@@ -10,35 +10,62 @@
 
 <body>
   <div class="content">
-    <div class="options">
-      <div class="file-input">
-        <span>Choose a file</span>
-        <input type="file" id="fileInput" accept="image/png, image/jpeg">
+    <div class="options-container">
+      <div class="options">
+        <div class="file-input">
+          <span>Choose a file</span>
+          <input type="file" id="fileInput" accept="image/png, image/jpeg">
+        </div>
+
+        <div class="controls">
+          <span>Resize to </span>
+          <input type="number" name="resize" id="resizeInput" value="500">
+        </div>
+
+        <div class="controls">
+          <span>Palette </span>
+          <select name="palette" id="paletteSelect"></select>
+        </div>
+
+        <div class="controls">
+          <span>Process </span>
+          <select name="process" id="processSelect"></select>
+        </div>
       </div>
 
-      <div class="controls">
-        <span>Resize to </span>
-        <input type="number" name="resize" id="resizeInput" value="500">
-      </div>
+      <div class="options" id="advancedOptions" style="display: none;">
+        <div class="controls-wide"
+          title="Much slower, but sometimes more accurate. Works best with irregular palettes and no dithering.">
+          <input type="checkbox" name="useLab" id="useLab">
+          <label for="useLab">Use CIELab color space</label>
+        </div>
 
-      <div class="controls">
-        <span>Palette </span>
-        <select name="palette" id="paletteSelect"></select>
-      </div>
+        <div class="controls-wide"
+          title="Allows any palette to be used with any process, regardless of performance impact.">
+          <input type="checkbox" name="allowSlow" id="allowSlow">
+          <label for="allowSlow">No palette/process restrictions</label>
+        </div>
 
-      <div class="controls">
-        <span>Process </span>
-        <select name="process" id="processSelect"></select>
-      </div>
+        <div class="controls-wide"
+          title="Enables the use of multiple CPU threads for faster processing.&#10;Some processes do not support multiple threads.">
+          <input type="checkbox" name="useThreads" id="useThreads" checked>
+          <label for="useThreads">Use threads</label>
+        </div>
 
-      <div class="controls-wide">
-        <input type="checkbox" name="useLab" id="useLab" class="wide-control">
-        <label for="useLab">Use CIELab color space</label>
-      </div>
+        <div class="controls-wide"
+          title="Attempts to balance processing time and CPU load, aiming for 3 to 10 second times.&#10;Auto mode is allowed to use up to half of the available CPU threads.">
+          <input type="radio" name="threadMode" id="threadModeAuto" checked value="auto">
+          <label for="threadModeAuto">Auto</label>
+        </div>
 
-      <div class="controls-wide">
-        <input type="checkbox" name="allowSlow" id="allowSlow" class="wide-control">
-        <label for="allowSlow">No palette/process restrictions</label>
+        <div class="controls"
+          title="Allows manual control over the number of threads used.&#10;Using all available threads can and *will* max out your CPU. Proceed with caution.">
+          <span>
+            <input type="radio" name="threadMode" id="threadModeManual" value="manual">
+            <label for="threadModeManual">Manual</label>
+          </span>
+          <input type="number" name="threadCount" id="threadCount" value="2" disabled>
+        </div>
       </div>
     </div>
 
@@ -48,7 +75,9 @@
     </div>
 
     <div class="buttons">
-      <button id="toggleOriginal">View Original</button>
+      <button id="toggleAdvanced">Show advanced options</button>
+      <button id="toggleOriginal">View original</button>
+      <button id="abort" disabled>Stop</button>
     </div>
 
     <div class="canvas-container">

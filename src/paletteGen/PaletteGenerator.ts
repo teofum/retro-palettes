@@ -212,20 +212,20 @@ class PaletteGenerator {
 
           // Stop if the palette is full
           if (this.nColors - reserved - this.nonReservedCTEs <= 0) {
-            console.warn(`Ran out of colors! At node ${i}, level ${level}`);
+            //console.warn(`Ran out of colors! At node ${i}, level ${level}`);
             break;
           }
         }
 
         // Stop if the palette is full
         if (this.nColors - reserved - this.nonReservedCTEs <= 0) {
-          console.warn(`Ran out of colors! At level ${level}`);
+          //console.warn(`Ran out of colors! At level ${level}`);
           break;
         }
         level--;
       }
 
-      console.log(`${this.ctes.length} CTEs, ${this.ctes.length - this.nonReservedCTEs} reserved`);
+      //console.log(`${this.ctes.length} CTEs, ${this.ctes.length - this.nonReservedCTEs} reserved`);
       if (this.ctes.length === lastIterationCTEs) {
         this.k = this.k / 2;
         stuckCounter++;

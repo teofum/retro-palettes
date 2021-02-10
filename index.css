@@ -18,9 +18,17 @@ body {
 }
 
 .options {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: auto 1fr;
   gap: 16px;
+}
+
+.options#advancedOptions {
+  margin-left: 16px;
+}
+
+.options input[type="radio"] {
+  margin-left: 32px;
 }
 
 .file-input {

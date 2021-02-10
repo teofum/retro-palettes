@@ -15,19 +15,27 @@ export type ProcessFn = (
 export interface Process {
   id: string;
   name: string;
+  procFn: ProcessFn;
+  
   maxAllowedPaletteSize: number;
-  function: ProcessFn;
+  supportsMultipleThreads: boolean;
+
+  // Process complexity O(n) per pixel, referring to the
+  // number of color comparisons made in the worst case
+  // where n is the number of colors in the palette
+  // Used to determine thread count in auto mode
+  complexity: (n: number) => number;
 }
 
 export const getProcessById = (id: string): Process | null => {
   switch (id) {
-    case 'ProcBasic':
+    case Basic.id:
       return Basic;
-    case 'ProcFloydSteinberg':
+    case FloydSteinberg.id:
       return FloydSteinberg;
-    case 'ProcBayerLikeFast':
+    case BayerLikeFast.id:
       return BayerLikeFast;
-    case 'ProcBayerLikeThorough':
+    case BayerLike.id:
       return BayerLike;
     default:
       return null;

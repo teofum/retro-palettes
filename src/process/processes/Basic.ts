@@ -19,7 +19,7 @@ const processBasic: ProcessFn = (
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = mapped[j];
 
-    if (i % line === 0 && cbProgress) cbProgress(i, size, dataIn); 
+    if (i % (8 * line) === 0 && cbProgress) cbProgress(i, size, dataIn); 
   }
 
   return dataIn;
@@ -28,8 +28,11 @@ const processBasic: ProcessFn = (
 const Basic: Process = {
   id: 'ProcBasic',
   name: 'Basic (no dithering)',
+  procFn: processBasic,
+  
   maxAllowedPaletteSize: 65536,
-  function: processBasic
+  supportsMultipleThreads: false, // Doesn't need them
+  complexity: (n) => n
 };
 
 export default Basic;
