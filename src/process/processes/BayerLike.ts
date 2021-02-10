@@ -6,7 +6,7 @@ import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
 // 8x8 threshold map
-const bayerMap = [
+const threshold = [
   0, 48, 12, 60, 3, 51, 15, 63,
   32, 16, 44, 28, 35, 19, 47, 31,
   8, 56, 4, 52, 11, 59, 7, 55,
@@ -67,7 +67,7 @@ function processBayer(fast: boolean = true): ProcessFn {
       color = Array.from(dataIn.data.slice(i, i + 4));
       const x = (i % line) / 4;
       const y = ~~(i / line);
-      const mapValue = bayerMap[(x % 8) + (y % 8) * 8];
+      const mapValue = threshold[(x % 8) + (y % 8) * 8];
 
       bestMix = { color1: [0, 0, 0], color2: color, ratio: 0.33 };
       let minError = Number.MAX_VALUE;

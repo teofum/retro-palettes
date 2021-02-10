@@ -3,6 +3,7 @@ import ColorPalette from '../palette/ColorPalette';
 import Basic from './processes/Basic';
 import { BayerLike, BayerLikeFast } from './processes/BayerLike';
 import FloydSteinberg from './processes/FloydSteinberg';
+import WeightedColorMap from './processes/Weighted';
 import { ProgressFn } from './ProcessWorker';
 
 export type ProcessFn = (
@@ -37,6 +38,8 @@ export const getProcessById = (id: string): Process | null => {
       return BayerLikeFast;
     case BayerLike.id:
       return BayerLike;
+    case WeightedColorMap.id:
+      return WeightedColorMap;
     default:
       return null;
   }

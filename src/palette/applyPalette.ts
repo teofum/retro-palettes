@@ -80,11 +80,10 @@ export function processImageAsync(
 
       // Assign roughly one thread per 50k pixels for a complexity rating of 2048
       // CR=2048 is a 64 color palette at O(n²/2) or 8 color palette at O(n²/2 * 64)
-      const wantThreads = ~~(size / 50000 * cr / 2048);
+      const wantThreads = ~~(size / 50000 * cr / 2048) + 1;
 
       // Need at least one thread, limit to max auto threads (half the available threads)
-      nThreads = wantThreads < 1 ? 1 :
-        (wantThreads > maxAutoThreads ? maxAutoThreads : wantThreads);
+      nThreads = (wantThreads > maxAutoThreads ? maxAutoThreads : wantThreads);
 
       console.log(`Want ${wantThreads} threads for ${size}px @CR${cr}, got ${nThreads} (max ${maxAutoThreads})`);
     } else nThreads = threads;

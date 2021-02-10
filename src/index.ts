@@ -15,6 +15,7 @@ import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { clearPaletteCache } from './paletteGen/getAutoPalette';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
+import WeightedColorMap from './process/processes/Weighted';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -93,7 +94,8 @@ const processes = [
   Basic,
   FloydSteinberg,
   BayerLikeFast,
-  BayerLike
+  BayerLike,
+  WeightedColorMap
 ];
 let selectedProcess = Basic;
 const procSelect = document.getElementById('processSelect') as HTMLSelectElement;
