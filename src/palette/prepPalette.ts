@@ -15,7 +15,7 @@ export default function prepPalette(
   if (palette.type === PaletteType.PAuto)
     return getAutoPalette(palette, image);
   
-  if (process.id.includes('BayerLike') && palette.type === PaletteType.PRGB)
+  if (process.name.includes('Ordered') && palette.type === PaletteType.PRGB)
     return expandRGBPalette(palette);
 
   return palette;
