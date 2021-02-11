@@ -21,6 +21,8 @@ const processFloydSteinberg: ProcessFn = (
     for (let i = 0; i < size; i += 4) {
       const linear = srgb2linear(Array.from(dataIn.data.slice(i, i + 3)));
       for (let j = 0; j < 3; j++) dataIn.data[i + j] = linear[j];
+
+      if (i % (line * 4) === 0 && cbProgress) cbProgress(i, size, dataIn);
     }
 
     palette = {

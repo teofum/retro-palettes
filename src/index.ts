@@ -38,7 +38,6 @@ const procSelect = document.getElementById('processSelect') as HTMLSelectElement
 // Advanced options
 const advancedOptDiv = document.getElementById('advancedOptions') as HTMLElement;
 const featGamma = document.getElementById('featGamma') as HTMLInputElement;
-const labCheckbox = document.getElementById('useLab') as HTMLInputElement;
 const allowSlow = document.getElementById('allowSlow') as HTMLInputElement;
 const featThreads = document.getElementById('featThreads') as HTMLInputElement;
 const autoThreads = document.getElementById('threadModeAuto') as HTMLInputElement;
@@ -132,8 +131,6 @@ processes.forEach(process => {
 
   procSelect.appendChild(option);
 });
-
-labCheckbox.addEventListener('change', function () { update(); });
 
 // Add change handlers for settings
 paletteSelect.addEventListener('change', function (ev: Event) {
@@ -238,7 +235,7 @@ function update(): void {
     imageCanvas, outputCanvas,
     selectedPalette,
     selectedProcess,
-    labCheckbox.checked ? 'cdLab' : 'cdRGB',
+    'cdRGB',
     {
       gamma: featGamma.checked,
       threads: threads
