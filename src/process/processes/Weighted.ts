@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import CompareFn from '../../colorDistance/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import { Process, ProcessFn } from '../Process';
@@ -19,7 +19,7 @@ const threshold = [
 const processWeightedColormap: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
-  distFn: ColorDistanceFn,
+  distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {
@@ -63,7 +63,7 @@ const processWeightedColormap: ProcessFn = (
           if (features.gamma) avgWithCandidate = colorSum.map((v, i) =>
             Math.pow((v + pColor[i] * add) / (candidates.length + add), invGamma) * 255);
           else avgWithCandidate = colorSum.map((v, i) =>
-            (v + pColor[i] * add) / (candidates.length + add), invGamma);
+            (v + pColor[i] * add) / (candidates.length + add));
 
           // Error with this candidate and weight
           const error = distFn(avgWithCandidate, color);

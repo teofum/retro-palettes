@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import CompareFn from '../../colorDistance/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import PaletteType from '../../palette/PaletteGroups';
@@ -30,7 +30,7 @@ interface ColorMix {
 // too much
 function evalMixError(
   target: number[], mix: number[], compDist: number,
-  rmh: number, distFn: ColorDistanceFn
+  rmh: number, distFn: CompareFn
 ): number {
   return distFn(target, mix) + compDist * ((rmh < 0 ? -rmh : rmh) + 0.5);
 }
@@ -39,7 +39,7 @@ function processBayer(fast: boolean = true): ProcessFn {
   return (
     dataIn: ImageData,
     palette: ColorPalette,
-    distFn: ColorDistanceFn,
+    distFn: CompareFn,
     features: ProcessFeatures,
     cbProgress: ProgressFn | null
   ) => {

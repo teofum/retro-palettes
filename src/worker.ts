@@ -1,4 +1,4 @@
-import { getColorDistanceFnById } from './colorDistance/ColorDistanceFn';
+import { getColorDistanceFnById } from './colorDistance/CompareFn';
 import { ProcessFeatures } from './palette/applyPalette';
 import ColorPalette from './palette/ColorPalette';
 import PaletteType from './palette/PaletteGroups';

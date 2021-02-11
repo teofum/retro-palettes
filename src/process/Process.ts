@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
+import CompareFn from '../colorDistance/CompareFn';
 import { ProcessFeatures } from '../palette/applyPalette';
 import ColorPalette from '../palette/ColorPalette';
 import Basic from './processes/Basic';
@@ -12,7 +12,7 @@ export type FeatureSupport = { [feature: string]: boolean };
 export type ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
-  distFn: ColorDistanceFn,
+  distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => ImageData;

@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import CompareFn from '../../colorDistance/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import { paletteMap } from '../../palette/paletteMap';
@@ -8,7 +8,7 @@ import { ProgressFn } from '../ProcessWorker';
 const processBasic: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
-  distFn: ColorDistanceFn,
+  distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {

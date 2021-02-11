@@ -2,7 +2,7 @@ import { Process } from '../process/Process';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 import { getAutoPalette } from '../paletteGen/getAutoPalette';
-import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
+import CompareFn from '../colorDistance/CompareFn';
 import ProcessWorker from '../process/ProcessWorker';
 import prepPalette from './prepPalette';
 import { getComplexityRating } from '../utils/utils';
@@ -28,7 +28,7 @@ export function processImage(
   cvOut: HTMLCanvasElement,
   palette: ColorPalette,
   process: Process,
-  distFn: ColorDistanceFn,
+  distFn: CompareFn,
   features: ProcessFeatures
 ): void {
   cvOut.width = cvIn.width;

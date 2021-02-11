@@ -4,42 +4,55 @@
 
 // All conversions use a D65/2° standard illuminant where applicable
 
-// Converts sRGB to XYZ color space
-export function srgb2xyz(rgb: number[]): number[] {
-  // Intermediary RGB values
-  const irgb = rgb.map(val => {
+// Gets luminance for a color in sRGB
+export function luma_srgb(rgb: number[]): number {
+  return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / (255.0 * 1000);
+}
+
+export function luma_linear(lrgb: number[]): number {
+  return lrgb[0] * 0.2126 + lrgb[1] * 0.7152 + lrgb[2] * 0.0722;
+}
+
+// Converts sRGB to linear RGB
+export function srgb2linear(rgb: number[], gamma: number = 2.2): number[] {
+  return rgb.map(val => {
     let vNew = val / 255.0;
     vNew = (vNew > 0.04045) ?
-      Math.pow((vNew + 0.055) / 1.055, 2.4) :
+      Math.pow((vNew + 0.055) / 1.055, gamma) :
       vNew / 12.92;
     return vNew * 100;
   });
-  
+}
+
+// Converts linear RGB to sRGB
+export function linear2srgb(lrgb: number[], gamma: number = 2.2): number[] {
+  return lrgb.map(val => {
+    let vNew = val / 100.0;
+    vNew = (vNew > 0.0031308) ?
+      1.055 * Math.pow(vNew, 1 / gamma) - 0.055 :
+      vNew * 12.92;
+    return ~~(vNew * 255);
+  });
+}
+
+// Converts sRGB to XYZ color space
+export function srgb2xyz(rgb: number[], gamma: number = 2.2): number[] {
+  const lrgb = srgb2linear(rgb, gamma);
   return [
-    irgb[0] * 0.4124 + irgb[1] * 0.3576 + irgb[2] * 0.1805, // X
-    irgb[0] * 0.2126 + irgb[1] * 0.7152 + irgb[2] * 0.0722, // Y
-    irgb[0] * 0.0193 + irgb[1] * 0.1192 + irgb[2] * 0.9505  // Z
+    lrgb[0] * 0.4124 + lrgb[1] * 0.3576 + lrgb[2] * 0.1805, // X
+    lrgb[0] * 0.2126 + lrgb[1] * 0.7152 + lrgb[2] * 0.0722, // Y
+    lrgb[0] * 0.0193 + lrgb[1] * 0.1192 + lrgb[2] * 0.9505  // Z
   ];
 }
 
 // Converts XYZ color space to sRGB
-export function xyz2srgb(xyz: number[]): number[] {
-  // Intermediary XYZ values
-  const ixyz = xyz.map(val => val / 100.0);
-
-  // Intermediary RGB values
-  const irgb = [
-    ixyz[0] *  3.2406 + ixyz[1] * -1.5372 + ixyz[2] * -0.4986,
-    ixyz[0] * -0.9689 + ixyz[1] *  1.8758 + ixyz[2] *  0.0415,
-    ixyz[0] *  0.0557 + ixyz[1] * -0.2040 + ixyz[2] *  1.0570
+export function xyz2srgb(xyz: number[], gamma: number = 2.2): number[] {
+  const lrgb = [
+    xyz[0] * 3.2406 + xyz[1] * -1.5372 + xyz[2] * -0.4986,
+    xyz[0] * -0.9689 + xyz[1] * 1.8758 + xyz[2] * 0.0415,
+    xyz[0] * 0.0557 + xyz[1] * -0.2040 + xyz[2] * 1.0570
   ];
-
-  return irgb.map(val => {
-    const vNew = (val > 0.0031308) ?
-      1.055 * Math.pow(val, 1/2.4) - 0.055 :
-      val * 12.92;
-    return vNew * 255;
-  });
+  return linear2srgb(lrgb, gamma);
 }
 
 // Converts XYZ color to CIE-L*ab
@@ -51,7 +64,7 @@ export function xyz2lab(xyz: number[]): number[] {
   ];
 
   ixyz = ixyz.map(val => (val > 0.008856) ?
-    Math.pow(val, 1/3) :
+    Math.pow(val, 1 / 3) :
     (val * 7.787) + (16 / 116)
   );
 
@@ -86,11 +99,11 @@ export function lab2xyz(lab: number[]): number[] {
 }
 
 // Converts sRGB to CIE-L*ab
-export function srgb2lab(rgb: number[]): number[] {
-  return xyz2lab(srgb2xyz(rgb));
+export function srgb2lab(rgb: number[], gamma: number = 2.2): number[] {
+  return xyz2lab(srgb2xyz(rgb, gamma));
 }
 
 // Converts CIE-L*ab to sRGB
-export function lab2srgb(rgb: number[]): number[] {
-  return xyz2srgb(lab2xyz(rgb));
+export function lab2srgb(rgb: number[], gamma: number = 2.2): number[] {
+  return xyz2srgb(lab2xyz(rgb), gamma);
 }

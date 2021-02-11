@@ -1,4 +1,4 @@
-import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
+import CompareFn from '../colorDistance/CompareFn';
 import ColorPalette from './ColorPalette';
 import PaletteType from './PaletteGroups';
 
@@ -7,7 +7,7 @@ import PaletteType from './PaletteGroups';
 function defPaletteMap(
   color: number[],
   palette: ColorPalette,
-  distFn: ColorDistanceFn
+  distFn: CompareFn
 ): number[] {
   let closest: number[] = [];
 
@@ -39,7 +39,7 @@ function clampedRGBPaletteMap(color: number[], palette: ColorPalette): number[] 
 export function paletteMap(
   color: number[],
   palette: ColorPalette,
-  distFn: ColorDistanceFn
+  distFn: CompareFn
 ): number[] {
   switch (palette.type) {
     case PaletteType.PRGB:
