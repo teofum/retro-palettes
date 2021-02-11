@@ -1,4 +1,4 @@
-import CompareFn from '../../colorDistance/CompareFn';
+import CompareFn, { colDistLinearL, colDistRGB } from '../../colorDistance/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import PaletteType from '../../palette/PaletteGroups';
@@ -33,7 +33,7 @@ const processFloydSteinberg: ProcessFn = (
 
   for (let i = 0; i < size; i += 4) {
     const color = Array.from(dataIn.data.slice(i, i + 3));
-    const mapped: number[] = paletteMap(color, palette, distFn);
+    const mapped: number[] = paletteMap(color, palette, features.gamma ? colDistLinearL : colDistRGB);
 
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = (features.gamma ? linear2srgb(mapped) : mapped)[j];

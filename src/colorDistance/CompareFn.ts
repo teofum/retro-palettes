@@ -17,7 +17,7 @@ export function colDistRGBL(color1: number[], color2: number[]): number {
 
 // Linear space calculation.
 export function colDistLinearL(color1: number[], color2: number[]): number {
-  return colDistRGBL(linear2srgb(color1), linear2srgb(color2));
+  return colDistRGB(linear2srgb(color1), linear2srgb(color2));
 }
 
 const labCache: { [key: number]: number[] } = {};
