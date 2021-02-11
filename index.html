@@ -35,7 +35,13 @@
 
       <div class="options" id="advancedOptions" style="display: none;">
         <div class="controls-wide"
-          title="Much slower, but sometimes more accurate. Works best with irregular palettes and no dithering.">
+          title="Enables gamma correction when available, greatly increasing contrast and color accuracy.">
+          <input type="checkbox" name="featGamma" id="featGamma" checked>
+          <label for="featGamma">Gamma correction</label>
+        </div>
+
+        <div class="controls-wide"
+          title="Slower, but sometimes more accurate.">
           <input type="checkbox" name="useLab" id="useLab">
           <label for="useLab">Use CIELab color space</label>
         </div>
@@ -48,8 +54,8 @@
 
         <div class="controls-wide"
           title="Enables the use of multiple CPU threads for faster processing.&#10;Some processes do not support multiple threads.">
-          <input type="checkbox" name="useThreads" id="useThreads" checked>
-          <label for="useThreads">Use threads</label>
+          <input type="checkbox" name="featThreads" id="featThreads" checked>
+          <label for="featThreads">Use threads</label>
         </div>
 
         <div class="controls-wide"
@@ -62,7 +68,6 @@
           title="Allows manual control over the number of threads used.&#10;Using all available threads can and *will* max out your CPU. Proceed with caution.">
           <span>
             <input type="radio" name="threadMode" id="threadModeManual" value="manual">
-            <label for="threadModeManual">Manual</label>
           </span>
           <input type="number" name="threadCount" id="threadCount" value="2" disabled>
         </div>

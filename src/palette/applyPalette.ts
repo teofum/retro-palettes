@@ -12,6 +12,11 @@ export const maxAutoThreads = Math.max(~~(threadsAvailable / 2), 1);
 
 const activeWorkers: ProcessWorker[] = [];
 
+export interface ProcessFeatures {
+  gamma: boolean;
+  threads: number | 'auto';
+}
+
 export interface ImagePart {
   data: ImageData;
   x: number;
@@ -23,7 +28,8 @@ export function processImage(
   cvOut: HTMLCanvasElement,
   palette: ColorPalette,
   process: Process,
-  distFn: ColorDistanceFn
+  distFn: ColorDistanceFn,
+  features: ProcessFeatures
 ): void {
   cvOut.width = cvIn.width;
   cvOut.height = cvIn.height;
@@ -41,7 +47,7 @@ export function processImage(
   if (palette.type === PaletteType.PAuto) palette = getAutoPalette(palette, imageData);
 
   // Convert image using the passed process
-  process.procFn(imageData, palette, distFn, null);
+  process.procFn(imageData, palette, distFn, features, null);
   ctxOut?.putImageData(imageData, 0, 0);
 }
 
@@ -51,7 +57,7 @@ export function processImageAsync(
   palette: ColorPalette,
   process: Process,
   distFnId: string,
-  threads: number | 'auto' = 'auto'
+  features: ProcessFeatures
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     cvOut.width = cvIn.width;
@@ -71,8 +77,8 @@ export function processImageAsync(
     console.log(`Palette processing done in ${new Date().getTime() - startTime}ms`);
 
     let nThreads: number;
-    if (!process.supportsMultipleThreads) nThreads = 1;
-    else if (threads === 'auto') {
+    if (!process.supports.threads) nThreads = 1;
+    else if (features.threads === 'auto') {
       // Calculate the number of threads needed based on
       // process complexity and image size
       const cr = getComplexityRating(process, palette);
@@ -86,7 +92,7 @@ export function processImageAsync(
       nThreads = (wantThreads > maxAutoThreads ? maxAutoThreads : wantThreads);
 
       console.log(`Want ${wantThreads} threads for ${size}px @CR${cr}, got ${nThreads} (max ${maxAutoThreads})`);
-    } else nThreads = threads;
+    } else nThreads = features.threads;
     let activeThreads: number = 0;
 
     // Ensure part width is a multiple of 8, prevents dithering seams
@@ -128,7 +134,7 @@ export function processImageAsync(
       worker.onerror = (error) => reject(`Error in worker thread: ${error}`);
 
       console.log(`Starting worker thread ${t + 1}/${nThreads} w=${w}`);
-      worker.start(part, palette, process.id, distFnId);
+      worker.start(part, palette, process.id, distFnId, features);
       activeThreads++;
       activeWorkers.push(worker);
     }

@@ -1,4 +1,5 @@
 import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import PaletteType from '../../palette/PaletteGroups';
 import { expandRGBPalette } from '../../utils/utils';
@@ -39,6 +40,7 @@ function processBayer(fast: boolean = true): ProcessFn {
     dataIn: ImageData,
     palette: ColorPalette,
     distFn: ColorDistanceFn,
+    features: ProcessFeatures,
     cbProgress: ProgressFn | null
   ) => {
     // Expand an RGB palette into a fixed-color palette
@@ -139,7 +141,10 @@ export const BayerLikeFast: Process = {
   procFn: processBayer(),
   
   maxAllowedPaletteSize: 192,
-  supportsMultipleThreads: true,
+  supports: {
+    threads: true,
+    gamma: false // Not implemented
+  },
   complexity: (n) => (n * n / 2) // O(n²/2)
 };
 
@@ -149,6 +154,9 @@ export const BayerLike: Process = {
   procFn: processBayer(false),
   
   maxAllowedPaletteSize: 24,
-  supportsMultipleThreads: true,
+  supports: {
+    threads: true,
+    gamma: false // Not implemented
+  },
   complexity: (n) => (n * n * 32) // O(n²/2 * 64)
 };

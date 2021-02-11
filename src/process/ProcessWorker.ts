@@ -1,5 +1,5 @@
 import ProcWorker from 'worker-loader!../worker';
-import { ImagePart } from '../palette/applyPalette';
+import { ImagePart, ProcessFeatures } from '../palette/applyPalette';
 import ColorPalette from '../palette/ColorPalette';
 
 enum ProcessEvent {
@@ -63,12 +63,19 @@ class ProcessWorker {
     part: ImagePart,
     palette: ColorPalette,
     procId: string,
-    distFnId: string
+    distFnId: string,
+    features: ProcessFeatures
   ): boolean {
     if (this.busy) return false;
     this.busy = true;
 
-    this.worker.postMessage({ dataIn: part.data, palette, procId, distFnId });
+    this.worker.postMessage({
+      dataIn: part.data,
+      palette,
+      procId,
+      distFnId,
+      features 
+    });
     return true;
   }
 

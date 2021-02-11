@@ -1,4 +1,5 @@
 import { getColorDistanceFnById } from './colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from './palette/applyPalette';
 import ColorPalette from './palette/ColorPalette';
 import PaletteType from './palette/PaletteGroups';
 import { getAutoPalette } from './paletteGen/getAutoPalette';
@@ -13,6 +14,7 @@ interface ProcWorkerStartArgs {
   palette: ColorPalette;
   procId: string;
   distFnId: string;
+  features: ProcessFeatures;
 }
 
 enum ProcessEvent {
@@ -39,7 +41,7 @@ ctx.addEventListener('message', (ev: MessageEvent) => {
   const process = getProcessById(msg.procId);
   if (process) {
     const distFn = getColorDistanceFnById(msg.distFnId);
-    process.procFn(msg.dataIn, palette, distFn, reportProgress);
+    process.procFn(msg.dataIn, palette, distFn, msg.features, reportProgress);
     ctx.postMessage({ msg: ProcessEvent.Done, params: { result: msg.dataIn } });
     self.close();
   } else {

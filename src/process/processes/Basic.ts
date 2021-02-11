@@ -1,4 +1,5 @@
 import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import { paletteMap } from '../../palette/paletteMap';
 import { Process, ProcessFn } from '../Process';
@@ -8,6 +9,7 @@ const processBasic: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
   distFn: ColorDistanceFn,
+  features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {
   const line = dataIn.width * 4;
@@ -31,7 +33,10 @@ const Basic: Process = {
   procFn: processBasic,
   
   maxAllowedPaletteSize: 65536,
-  supportsMultipleThreads: false, // Doesn't need them
+  supports: {
+    threads: false, // Doesn't need them
+    gamma: false // Unsupported
+  },
   complexity: (n) => n
 };
 

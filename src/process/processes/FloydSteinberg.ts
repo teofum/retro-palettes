@@ -1,4 +1,5 @@
 import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import { paletteMap } from '../../palette/paletteMap';
 import { Process, ProcessFn } from '../Process';
@@ -8,6 +9,7 @@ const processFloydSteinberg: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
   distFn: ColorDistanceFn,
+  features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {
   const size = dataIn.width * dataIn.height * 4;
@@ -40,7 +42,10 @@ const FloydSteinberg: Process = {
   procFn: processFloydSteinberg,
   
   maxAllowedPaletteSize: 65536,
-  supportsMultipleThreads: false,
+  supports: {
+    threads: false, // Unsupported
+    gamma: true
+  },
   complexity: (n) => n
 };
 

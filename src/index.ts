@@ -1,3 +1,4 @@
+// Palettes
 import { CGAm4p0h, CGAm4p0l, CGAm4p1h, CGAm4p1l, CGAm5h, CGAm5l } from './palette/palettes/CGA2bModes';
 import CGA4bRGBI from './palette/palettes/CGA4bRGBI';
 import Cmdr644b from './palette/palettes/Cmdr644b';
@@ -6,28 +7,53 @@ import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameboyG, GameboyW } from './palette/palettes/Gameboy';
 import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
-import { loadFile, paletteSize } from './utils/utils';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
-import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
+
+// Processes
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
-import { clearPaletteCache } from './paletteGen/getAutoPalette';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
 import WeightedColorMap from './process/processes/Weighted';
+
+// Utils and functions
+import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
+import { clearPaletteCache } from './paletteGen/getAutoPalette';
+import { loadFile, paletteSize } from './utils/utils';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
 
 // Get both canvas elements and contexts
 const imageCanvas = document.getElementById('canvasOriginal') as HTMLCanvasElement;
-const imageContext = imageCanvas.getContext('2d');
-
 const outputCanvas = document.getElementById('canvasOutput') as HTMLCanvasElement;
 
+// Basic options
+const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+const resizeInput = document.getElementById('resizeInput') as HTMLInputElement;
+const paletteSelect = document.getElementById('paletteSelect') as HTMLSelectElement;
+const procSelect = document.getElementById('processSelect') as HTMLSelectElement;
+
+// Advanced options
+const advancedOptDiv = document.getElementById('advancedOptions') as HTMLElement;
+const featGamma = document.getElementById('featGamma') as HTMLInputElement;
+const labCheckbox = document.getElementById('useLab') as HTMLInputElement;
 const allowSlow = document.getElementById('allowSlow') as HTMLInputElement;
+const featThreads = document.getElementById('featThreads') as HTMLInputElement;
+const autoThreads = document.getElementById('threadModeAuto') as HTMLInputElement;
+const manualThreads = document.getElementById('threadModeManual') as HTMLInputElement;
+const threadCount = document.getElementById('threadCount') as HTMLInputElement;
+
+// Buttons and warning banner
+const toggleAdvanced = document.getElementById('toggleAdvanced') as HTMLButtonElement;
+const toggleOriginal = document.getElementById('toggleOriginal') as HTMLButtonElement;
+const btnStop = document.getElementById('abort') as HTMLButtonElement;
 const slowWarning = document.getElementById('slowWarning') as HTMLElement;
+
+// TODO: clean this up
+const imageContext = imageCanvas.getContext('2d');
+
 allowSlow.addEventListener('change', function () {
   allowSlow.checked ?
     slowWarning.style.removeProperty('display') :
@@ -64,7 +90,6 @@ const palettes = [
   Auto256
 ];
 let selectedPalette = Win4bRGBI;
-const paletteSelect = document.getElementById('paletteSelect') as HTMLSelectElement;
 
 // Populate the palette select element
 palettes.forEach(palette => {
@@ -98,7 +123,6 @@ const processes = [
   WeightedColorMap
 ];
 let selectedProcess = Basic;
-const procSelect = document.getElementById('processSelect') as HTMLSelectElement;
 
 // Populate the process select element
 processes.forEach(process => {
@@ -109,7 +133,6 @@ processes.forEach(process => {
   procSelect.appendChild(option);
 });
 
-const labCheckbox = document.getElementById('useLab') as HTMLInputElement;
 labCheckbox.addEventListener('change', function () { update(); });
 
 // Add change handlers for settings
@@ -132,7 +155,6 @@ procSelect.addEventListener('change', function (ev: Event) {
 });
 
 // Add file upload handling
-const resizeInput = document.getElementById('resizeInput') as HTMLInputElement;
 function onLoad(img: HTMLImageElement): void {
   let w = img.width;
   let h = img.height;
@@ -156,7 +178,6 @@ function onLoad(img: HTMLImageElement): void {
   update();
 }
 
-const fileInput = document.getElementById('fileInput') as HTMLInputElement;
 fileInput.addEventListener('change',
   function (ev: Event) { loadFile(ev).then(img => onLoad(img)); });
 
@@ -167,8 +188,7 @@ function toggleViewOriginal() {
     outputCanvas.classList.add('clip');
 }
 
-const toggleBtn = document.getElementById('toggleOriginal') as HTMLButtonElement;
-toggleBtn.addEventListener('click', toggleViewOriginal);
+toggleOriginal.addEventListener('click', toggleViewOriginal);
 
 // Show/hide advanced options
 function toggleAdvOptions() {
@@ -179,32 +199,25 @@ function toggleAdvOptions() {
   toggleAdvanced.innerHTML = `${visible ? 'Show' : 'Hide'} advanced options`;
 }
 
-const advancedOptDiv = document.getElementById('advancedOptions') as HTMLElement;
-const toggleAdvanced = document.getElementById('toggleAdvanced') as HTMLButtonElement;
 toggleAdvanced.addEventListener('click', toggleAdvOptions);
 
 // Thread options handling
-const useThreads = document.getElementById('useThreads') as HTMLInputElement;
-const autoThreads = document.getElementById('threadModeAuto') as HTMLInputElement;
-const manualThreads = document.getElementById('threadModeManual') as HTMLInputElement;
-const threadCount = document.getElementById('threadCount') as HTMLInputElement;
 threadCount.value = '2';
 threadCount.min = '1';
 threadCount.max = threadsAvailable.toString();
 
 function threadOptHandler() {
-  autoThreads.disabled = !useThreads.checked;
-  manualThreads.disabled = !useThreads.checked;
-  threadCount.disabled = !useThreads.checked || !manualThreads.checked;
+  autoThreads.disabled = !featThreads.checked;
+  manualThreads.disabled = !featThreads.checked;
+  threadCount.disabled = !featThreads.checked || !manualThreads.checked;
 }
 
-useThreads.addEventListener('change', threadOptHandler);
+featThreads.addEventListener('change', threadOptHandler);
 autoThreads.addEventListener('change', threadOptHandler);
 manualThreads.addEventListener('change', threadOptHandler);
 threadCount.addEventListener('change', threadOptHandler);
 
 // Stop button
-const btnStop = document.getElementById('abort') as HTMLButtonElement;
 btnStop.addEventListener('click', () => {
   terminateAllWorkers();
   btnStop.disabled = true;
@@ -216,7 +229,7 @@ btnStop.addEventListener('click', () => {
 function update(): void {
   outputCanvas.classList.remove('flash-anim');
 
-  const threads = !useThreads.checked ? 1 :
+  const threads = !featThreads.checked ? 1 :
     (autoThreads.checked ? 'auto' :
       parseInt(threadCount.value, 10));
 
@@ -226,7 +239,10 @@ function update(): void {
     selectedPalette,
     selectedProcess,
     labCheckbox.checked ? 'cdLab' : 'cdRGB',
-    threads
+    {
+      gamma: featGamma.checked,
+      threads: threads
+    }
   ).then(() => {
     outputCanvas.classList.add('flash-anim');
     btnStop.disabled = true;

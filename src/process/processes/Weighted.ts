@@ -1,4 +1,5 @@
 import ColorDistanceFn from '../../colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from '../../palette/applyPalette';
 import ColorPalette from '../../palette/ColorPalette';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
@@ -19,6 +20,7 @@ const processWeightedColormap: ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
   distFn: ColorDistanceFn,
+  features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {
   const gamma = 2.2;
@@ -28,12 +30,14 @@ const processWeightedColormap: ProcessFn = (
   const line = dataIn.width * 4;
 
   const candidates: number[] = [];
-  let color: number[], gColor: number[];
+  let color: number[], pColor: number[];
   let colorSum: number[], avgWithCandidate: number[];
 
   // Precalculate luminance table and gamma-corrected palette
   const luma = palette.data.map(color => color[0] * 299 + color[0] * 587 + color[0] * 114);
-  const gPalette = palette.data.map(color => color.map(ch => Math.pow(ch / 255, gamma)));
+  const gPalette = (features.gamma) ?
+    palette.data.map(color => color.map(ch => Math.pow(ch / 255, gamma))) :
+    [];
 
   for (let i = 0; i < size; i += 4) {
     color = Array.from(dataIn.data.slice(i, i + 4));
@@ -52,13 +56,14 @@ const processWeightedColormap: ProcessFn = (
 
       // Pick best color in palette as new candidate
       for (let p = 0; p < palette.data.length; p++) {
-        // pColor = palette.data[p];
-        gColor = gPalette[p];
+        pColor = (features.gamma ? gPalette : palette.data)[p];
 
         for (let add = 1; add <= maxWeight; add *= 2) {
           // Sum if the candidate was added with its current weight (gamma -> standard)
-          avgWithCandidate = colorSum.map((v, i) =>
-            Math.pow((v + gColor[i] * add) / (candidates.length + add), invGamma) * 255);
+          if (features.gamma) avgWithCandidate = colorSum.map((v, i) =>
+            Math.pow((v + pColor[i] * add) / (candidates.length + add), invGamma) * 255);
+          else avgWithCandidate = colorSum.map((v, i) =>
+            (v + pColor[i] * add) / (candidates.length + add), invGamma);
 
           // Error with this candidate and weight
           const error = distFn(avgWithCandidate, color);
@@ -71,7 +76,7 @@ const processWeightedColormap: ProcessFn = (
       }
 
       for (let j = 0; j < weight; j++) candidates.push(candidate);
-      colorSum = colorSum.map((ch, i) => ch + gPalette[candidate][i] * weight);
+      colorSum = colorSum.map((ch, i) => ch + (features.gamma ? gPalette : palette.data)[candidate][i] * weight);
     }
     candidates.sort((a, b) => luma[a] - luma[b]);
     const index = ~~(threshold[(x % 8) + (y % 8) * 8] * candidates.length);
@@ -91,7 +96,10 @@ const WeightedColorMap: Process = {
   procFn: processWeightedColormap,
 
   maxAllowedPaletteSize: 256,
-  supportsMultipleThreads: true,
+  supports: {
+    threads: true,
+    gamma: true
+  },
   complexity: (n) => (n * 384) // Based on worst case of O(n * 64 * log₂64), actual execution should be much faster
 };
 

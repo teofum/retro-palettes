@@ -1,4 +1,5 @@
 import ColorDistanceFn from '../colorDistance/ColorDistanceFn';
+import { ProcessFeatures } from '../palette/applyPalette';
 import ColorPalette from '../palette/ColorPalette';
 import Basic from './processes/Basic';
 import { BayerLike, BayerLikeFast } from './processes/BayerLike';
@@ -6,10 +7,13 @@ import FloydSteinberg from './processes/FloydSteinberg';
 import WeightedColorMap from './processes/Weighted';
 import { ProgressFn } from './ProcessWorker';
 
+export type FeatureSupport = { [feature: string]: boolean };
+
 export type ProcessFn = (
   dataIn: ImageData,
   palette: ColorPalette,
   distFn: ColorDistanceFn,
+  features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => ImageData;
 
@@ -19,7 +23,7 @@ export interface Process {
   procFn: ProcessFn;
   
   maxAllowedPaletteSize: number;
-  supportsMultipleThreads: boolean;
+  supports: FeatureSupport;
 
   // Process complexity O(n) per pixel, referring to the
   // number of color comparisons made in the worst case
