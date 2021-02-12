@@ -2,6 +2,7 @@ enum PaletteGroup {
   Indexed2Bit = '2-bit (4 color) Indexed',
   Indexed4Bit = '4-bit (16 color) Indexed',
   Mono = 'Monochrome',
+  Duo = 'Dual tone',
   RGB = 'RGB',
   RGBI = '4-bit (16 color) RGBI',
   Auto = 'Optimized (Auto)',

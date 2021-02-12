@@ -1,6 +1,7 @@
 enum PaletteType {
   Indexed,
   Mono,
+  DualTone,
   RGB,
   Auto
 }

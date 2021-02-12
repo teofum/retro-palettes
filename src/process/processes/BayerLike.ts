@@ -61,7 +61,7 @@ function processBayer(fast: boolean = true): ProcessFn {
     let bestMix: ColorMix;
 
     for (let i = 0; i < size; i += 4) {
-      color = Array.from(dataIn.data.slice(i, i + 4));
+      color = Array.from(dataIn.data.slice(i, i + 3));
       const x = (i % line) / 4;
       const y = ~~(i / line);
       const mapValue = threshold[(x % 8) + (y % 8) * 8];

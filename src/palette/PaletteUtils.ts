@@ -10,6 +10,8 @@ class PaletteUtils {
         return palette.data.length / 3;
       case PaletteType.Mono:
         return palette.data[0];
+      case PaletteType.DualTone:
+        return palette.data[0] * palette.data[1];
       case PaletteType.RGB:
         return palette.data[0] * palette.data[1] * palette.data[2];
       case PaletteType.Auto:
@@ -26,11 +28,26 @@ class PaletteUtils {
       case PaletteType.Indexed:
         return palette.data.slice(i * 3, i * 3 + 3);
       case PaletteType.Mono:
-        return palette.data.slice(1, 4).map(vMax => {
-          const vMin = vMax * palette.data[4];
+        return palette.data.slice(2, 5).map(vMax => {
+          const vMin = vMax * palette.data[1];
           const vRange = vMax - vMin;
           return vMin + i * ~~(vRange / (palette.data[0] - 1));
         });
+      case PaletteType.DualTone: {
+        const value: number[] = [0, 0, 0];
+        // For each color add to value
+        for (let j = 0; j < 2; j++) {
+          // Decode step for this channel
+          const step = j === 0 ? (i % palette.data[0]) : ~~(i / palette.data[0]);
+          // Get max value, calculate min value, step, and value component
+          palette.data.slice(4 + j * 3, 7 + j * 3).forEach((vMax, k) => {
+            const vMin = vMax * palette.data[2 + j];
+            const vRange = vMax - vMin;
+            value[k] += vMin + step * ~~(vRange / (palette.data[j] - 1));
+          });
+        }
+        return value;
+      }
       case PaletteType.RGB: {
         const b = i % palette.data[2];
         const g = ~~(i / palette.data[2]) % palette.data[1];

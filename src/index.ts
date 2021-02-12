@@ -6,7 +6,7 @@ import Win4bRGBI from './palette/palettes/Win4bRGBI';
 import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameBoy } from './palette/palettes/Gameboy';
-import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
+import { RGB16, RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 
@@ -22,6 +22,8 @@ import { clearPaletteCache } from './palette/AutoPalette';
 import { loadFile } from './utils/utils';
 import { Mono2A, Mono2G, Mono2W, Mono4A, Mono4W, Mono16, PipBoy } from './palette/palettes/Mono';
 import PaletteUtils from './palette/PaletteUtils';
+import { DuoBY2, DuoGM2, DuoOG2, DuoRC1, DuoRC2, DuoWA2 } from './palette/palettes/Duo';
+import CMYK from './palette/palettes/CMYK';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -85,12 +87,20 @@ const palettes = [
   Mono16,
   GameBoy,
   PipBoy,
+  DuoRC1,
+  DuoRC2,
+  DuoGM2,
+  DuoBY2,
+  DuoWA2,
+  DuoOG2,
   RGB8,
+  RGB16,
   RGB64,
   RGB256,
   Auto16,
   Auto64,
-  Auto256
+  Auto256,
+  CMYK
 ];
 let selectedPalette = Win4bRGBI;
 
