@@ -1,68 +1,24 @@
-import CompareFn, { colDistLinearL, colDistRGB } from '../../color/CompareFn';
-import { ProcessFeatures } from '../../palette/applyPalette';
-import Palette from '../../palette/Palette';
-import { paletteMap } from '../../palette/paletteMap';
-import PaletteUtils from '../../palette/PaletteUtils';
-import { linear2srgb, srgb2linear } from '../../utils/colorUtils';
-import { Process, ProcessFn } from '../Process';
-import { ProgressFn } from '../ProcessWorker';
+import { Process } from '../Process';
+import { processErrorDiffusion, ErrorDiffusionMatrix } from './ErrorDiffusionBase';
 
-const processFloydSteinberg: ProcessFn = (
-  dataIn: ImageData,
-  palette: Palette,
-  distFn: CompareFn,
-  features: ProcessFeatures,
-  cbProgress: ProgressFn | null
-) => {
-  const size = dataIn.width * dataIn.height * 4;
-  const line = dataIn.width * 4;
-
-  const colors = PaletteUtils.getColors(palette);
-
-  if (features.gamma) {
-    for (let i = 0; i < size; i += 4) {
-      const linear = srgb2linear(Array.from(dataIn.data.slice(i, i + 3)));
-      for (let j = 0; j < 3; j++) dataIn.data[i + j] = linear[j];
-
-      if (i % (line * 4) === 0 && cbProgress) cbProgress(i, size, dataIn);
-    }
-
-    for (let i = 0; i < colors.length; i++)
-      colors[i] = srgb2linear(colors[i]);
-  }
-
-  for (let i = 0; i < size; i += 4) {
-    const color = Array.from(dataIn.data.slice(i, i + 3));
-    const mapped: readonly number[] = paletteMap(color, colors, features.gamma ? colDistLinearL : colDistRGB);
-
-    for (let j = 0; j < 3; j++)
-      dataIn.data[i + j] = (features.gamma ? linear2srgb(mapped) : mapped)[j];
-
-    const error = color.map((ch, i) => ch - mapped[i]);
-    for (let j = 0; j < 3; j++) {
-      dataIn.data[i + 4 + j] += error[j] * 7 / 16;
-      dataIn.data[i + line - 4 + j] += error[j] * 3 / 16;
-      dataIn.data[i + line + j] += error[j] * 5 / 16;
-      dataIn.data[i + line + 4 + j] += error[j] * 1 / 16;
-    }
-
-    if (i % (4 * line) === 0 && cbProgress) cbProgress(i, size, dataIn);
-  }
-
-  return dataIn;
-};
+const edMatrixFloydSteinberg: ErrorDiffusionMatrix = [
+  { x:  1, y: 0, w: 7 / 16 },
+  { x: -1, y: 1, w: 3 / 16 },
+  { x:  0, y: 1, w: 5 / 16 },
+  { x:  1, y: 1, w: 1 / 16 }
+];
 
 const FloydSteinberg: Process = {
   id: 'ProcFloydSteinberg',
   name: 'Floyd–Steinberg',
-  procFn: processFloydSteinberg,
+  procFn: processErrorDiffusion(edMatrixFloydSteinberg),
 
   maxAllowedPaletteSize: 65536,
   supports: {
     threads: false, // Unsupported
     gamma: true
   },
-  complexity: (n) => n
+  complexity: (n) => n * 2
 };
 
 export default FloydSteinberg;

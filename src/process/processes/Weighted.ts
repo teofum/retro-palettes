@@ -18,7 +18,7 @@ const threshold = [
   42, 26, 38, 22, 41, 25, 37, 21
 ].map(v => v / 64.0);
 
-const processWeightedColormap: ProcessFn = (
+const processColorThreshold: ProcessFn = (
   dataIn: ImageData,
   palette: Palette,
   distFn: CompareFn,
@@ -98,10 +98,10 @@ const processWeightedColormap: ProcessFn = (
   return dataIn;
 };
 
-const WeightedColorMap: Process = {
-  id: 'ProcWeightedColorMap',
-  name: 'Ordered (Weighted Color Map)',
-  procFn: processWeightedColormap,
+const ColorThresholdMatrix: Process = {
+  id: 'ProcColorThresholdMatrix',
+  name: 'Color Threshold Matrix',
+  procFn: processColorThreshold,
 
   maxAllowedPaletteSize: 64,
   supports: {
@@ -111,4 +111,4 @@ const WeightedColorMap: Process = {
   complexity: (n) => (n * 384) // Based on worst case of O(n * 64 * log₂64), actual execution should be much faster
 };
 
-export default WeightedColorMap;
+export default ColorThresholdMatrix;

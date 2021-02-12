@@ -17,13 +17,14 @@ import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 import Basic from './process/processes/Basic';
 import FloydSteinberg from './process/processes/FloydSteinberg';
 import { BayerLike, BayerLikeFast } from './process/processes/BayerLike';
-import WeightedColorMap from './process/processes/Weighted';
+import ColorThresholdMatrix from './process/processes/Weighted';
 
 // Utils and functions
 import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
 import { clearPaletteCache } from './palette/AutoPalette';
 import { loadFile } from './utils/utils';
 import PaletteUtils from './palette/PaletteUtils';
+import MinAverageError from './process/processes/MinAverageError';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -138,9 +139,10 @@ paletteSelect.value = selectedPalette.name;
 const processes = [
   Basic,
   FloydSteinberg,
+  MinAverageError,
   BayerLikeFast,
   BayerLike,
-  WeightedColorMap
+  ColorThresholdMatrix
 ];
 let selectedProcess = Basic;
 

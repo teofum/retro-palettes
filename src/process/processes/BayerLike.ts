@@ -133,7 +133,7 @@ function processBayer(fast: boolean = true): ProcessFn {
 
 export const BayerLikeFast: Process = {
   id: 'ProcBayerLikeFast',
-  name: 'Ordered (Bayer-like) – Fast',
+  name: 'Bayer-like – Fast',
   procFn: processBayer(),
   
   maxAllowedPaletteSize: 192,
@@ -146,7 +146,7 @@ export const BayerLikeFast: Process = {
 
 export const BayerLike: Process = {
   id: 'ProcBayerLikeThorough',
-  name: 'Ordered (Bayer-like) – High Quality',
+  name: 'Bayer-like – High Quality',
   procFn: processBayer(false),
   
   maxAllowedPaletteSize: 24,
