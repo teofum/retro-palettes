@@ -52,7 +52,6 @@ class PaletteUtils {
 
   public static transform(palette: Palette, transform: ColorTransform): Palette {
     const colors = this.getColors(palette).map(color => transform(color));
-    console.log(colors);
     return {
       name: `${palette.name} :: ${transform.name}`,
       type: PaletteType.Indexed,

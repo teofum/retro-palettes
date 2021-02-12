@@ -28,7 +28,7 @@ export function gammaCorrectMC(value: number, gamma: number = 2.2, allowNegative
   } else return Math.pow(value / 255, gamma);
 }
 
-export function gammaUnorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
+export function gammaUncorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
   const ungamma = 1 / gamma;
   if (allowNegative) {
     const sign = value < 0 ? -1 : 1;

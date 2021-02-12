@@ -2,7 +2,7 @@ import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import Palette from '../../palette/Palette';
 import PaletteUtils from '../../palette/PaletteUtils';
-import { gammaCorrect } from '../../utils/gamma';
+import { gammaCorrect, gammaUncorrectMC } from '../../utils/gamma';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
@@ -25,15 +25,13 @@ const processWeightedColormap: ProcessFn = (
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
 ) => {
-  const gamma = 2.2;
-  const invGamma = 1 / gamma;
-
   const size = dataIn.width * dataIn.height * 4;
   const line = dataIn.width * 4;
 
   const candidates: number[] = [];
-  let color: number[], pColor: readonly number[];
+  let color: number[], pColor: number[];
   let colorSum: number[], avgWithCandidate: number[];
+  const test = [0, 0, 0];
 
   // Precalculate luminance table and gamma-corrected palette
   const luma = PaletteUtils.getColors(palette)
@@ -62,17 +60,20 @@ const processWeightedColormap: ProcessFn = (
 
       // Pick best color in palette as new candidate
       for (let p = 0; p < colors.length; p++) {
-        pColor = colors[p];
+        pColor = [...colors[p]];
+        avgWithCandidate = [...colorSum];
 
         for (let add = 1; add <= maxWeight; add *= 2) {
           // Sum if the candidate was added with its current weight (gamma -> standard)
-          if (features.gamma) avgWithCandidate = colorSum.map((v, i) =>
-            Math.pow((v + pColor[i] * add) / (candidates.length + add), invGamma) * 255);
-          else avgWithCandidate = colorSum.map((v, i) =>
-            (v + pColor[i] * add) / (candidates.length + add));
+          const div = candidates.length + add;
+          for (let j = 0; j < 3; j++) {
+            avgWithCandidate[j] = colorSum[j] + pColor[j] * add;
+            test[j] = avgWithCandidate[j] / div;
+            if (features.gamma) test[j] = gammaUncorrectMC(test[j]);
+          }
 
           // Error with this candidate and weight
-          const error = distFn(avgWithCandidate, color);
+          const error = distFn(test, color);
           if (error < minError) {
             weight = add;
             candidate = p;
@@ -82,7 +83,7 @@ const processWeightedColormap: ProcessFn = (
       }
 
       for (let j = 0; j < weight; j++) candidates.push(candidate);
-      colorSum = colorSum.map((ch, i) => ch + colors[candidate][i] * weight);
+      for (let j = 0; j < 3; j++) colorSum[j] += colors[candidate][j] * weight;
     }
     candidates.sort((a, b) => luma[a] - luma[b]);
     const index = ~~(threshold[(x % 8) + (y % 8) * 8] * candidates.length);
