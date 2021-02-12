@@ -1,11 +1,9 @@
 import { Process } from '../process/Process';
-import ColorPalette from './ColorPalette';
-import PaletteType from './PaletteGroups';
-import { getAutoPalette } from '../paletteGen/getAutoPalette';
-import CompareFn from '../colorDistance/CompareFn';
+import CompareFn from '../color/CompareFn';
 import ProcessWorker from '../process/ProcessWorker';
 import prepPalette from './prepPalette';
 import { getComplexityRating } from '../utils/utils';
+import Palette from './Palette';
 
 export const threadsAvailable = navigator.hardwareConcurrency;
 export const maxAutoThreads = Math.max(~~(threadsAvailable / 2), 1);
@@ -26,7 +24,7 @@ export interface ImagePart {
 export function processImage(
   cvIn: HTMLCanvasElement,
   cvOut: HTMLCanvasElement,
-  palette: ColorPalette,
+  palette: Palette,
   process: Process,
   distFn: CompareFn,
   features: ProcessFeatures
@@ -44,7 +42,7 @@ export function processImage(
   if (!imageData) throw new Error('Unable to get image data from context');
 
   // Special handling for certain palettes
-  if (palette.type === PaletteType.PAuto) palette = getAutoPalette(palette, imageData);
+  //if (palette.type === PaletteType.PAuto) palette = getAutoPalette(palette, imageData);
 
   // Convert image using the passed process
   process.procFn(imageData, palette, distFn, features, null);
@@ -54,7 +52,7 @@ export function processImage(
 export function processImageAsync(
   cvIn: HTMLCanvasElement,
   cvOut: HTMLCanvasElement,
-  palette: ColorPalette,
+  palette: Palette,
   process: Process,
   distFnId: string,
   features: ProcessFeatures

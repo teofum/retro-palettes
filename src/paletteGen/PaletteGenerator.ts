@@ -1,17 +1,12 @@
-import ColorPalette from '../palette/ColorPalette';
-import PaletteType from '../palette/PaletteGroups';
+import { AutoPaletteOptions } from '../palette/AutoPalette';
+import Palette from '../palette/Palette';
+import PaletteGroup from '../palette/PaletteGroup';
+import PaletteType from '../palette/PaletteType';
 import ColorNode from './ColorNode';
 import NodeLike from './NodeLike';
 
 // Sample every n pixels in the x and y axes (1/n^2 pixels total)
 const SUBSAMPLING = 2;
-
-export interface PaletteGenOptions {
-  numColors: number;
-  reservedLevel: number;
-  levels: number;
-  inclThresholdCoeff?: number;
-}
 
 interface CTE {
   index: number;
@@ -34,14 +29,14 @@ class PaletteGenerator {
   private ctes: CTE[];
   private generated: boolean = false;
 
-  constructor(opts: PaletteGenOptions) {
+  constructor(opts: AutoPaletteOptions) {
     this.levels = opts.levels;
     this.tree = makeTree(opts.levels);
     this.ctes = [];
 
     this.reservedLevel = opts.reservedLevel;
-    this.nColors = opts.numColors;
-    this.k = opts.inclThresholdCoeff || 1;
+    this.nColors = opts.size;
+    this.k = opts.thresholdCoeff || 1;
   }
 
   // Add a color to the appropriate leaf node (octcube)
@@ -252,9 +247,9 @@ class PaletteGenerator {
 }
 
 export function generatePalette(
-  opts: PaletteGenOptions,
+  opts: AutoPaletteOptions,
   img: ImageData
-): ColorPalette {
+): Palette {
   const octree = new PaletteGenerator(opts);
 
   const size = img.width * img.height * 4;
@@ -270,9 +265,9 @@ export function generatePalette(
 
   const colors = octree.getPalette();
   return {
-    name: '__GENERATED__',
-    type: PaletteType.POther,
-    useAlpha: false,
-    data: colors
+    name: `AUTO_${opts.size}L${opts.levels}R${opts.reservedLevel}`,
+    type: PaletteType.Indexed,
+    group: PaletteGroup.Generated,
+    data: colors.reduce((flat, color) => flat.concat(color))
   };
 }

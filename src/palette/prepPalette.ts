@@ -1,22 +1,23 @@
-import { getAutoPalette } from '../paletteGen/getAutoPalette';
 import { Process } from '../process/Process';
-import { expandRGBPalette } from '../utils/utils';
-import ColorPalette from './ColorPalette';
-import PaletteType from './PaletteGroups';
+import { getAutoPalette } from './AutoPalette';
+import Palette from './Palette';
+import PaletteType from './PaletteType';
 
 // Handles any palette transformations usually done
 // by any given process, so they may be done in the
 // main thread.
 export default function prepPalette(
-  palette: ColorPalette,
+  palette: Palette,
   process: Process,
   image: ImageData
-): ColorPalette {
-  if (palette.type === PaletteType.PAuto)
-    return getAutoPalette(palette, image);
-  
-  if (process.name.includes('Ordered') && palette.type === PaletteType.PRGB)
-    return expandRGBPalette(palette);
+): Palette {
+  if (palette.type === PaletteType.Auto)
+    return getAutoPalette({
+      size: palette.data[0],
+      reservedLevel: palette.data[1],
+      levels: palette.data[2],
+      thresholdCoeff: palette.data[3]
+    }, image);
 
   return palette;
 }

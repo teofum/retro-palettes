@@ -1,23 +1,24 @@
-import ColorPalette from '../ColorPalette';
-import PaletteType from '../PaletteGroups';
+import Palette from '../Palette';
+import PaletteGroup from '../PaletteGroup';
+import PaletteType from '../PaletteType';
 
-export const RGB8: ColorPalette = {
+export const RGB8: Palette = {
   name: '8-color RGB (3-bit, 1bpc)',
-  type: PaletteType.PRGB,
-  useAlpha: false,
-  data: [[1, 1, 1]]
+  type: PaletteType.RGB,
+  group: PaletteGroup.RGB,
+  data: [2, 2, 2]
 };
 
-export const RGB64: ColorPalette = {
+export const RGB64: Palette = {
   name: '64-color RGB (6-bit, 2bpc)',
-  type: PaletteType.PRGB,
-  useAlpha: false,
-  data: [[2, 2, 2]]
+  type: PaletteType.RGB,
+  group: PaletteGroup.RGB,
+  data: [4, 4, 4]
 };
 
-export const RGB256: ColorPalette = {
+export const RGB256: Palette = {
   name: '256-color RGB (8-bit, 3-3-2)',
-  type: PaletteType.PRGB,
-  useAlpha: false,
-  data: [[3, 3, 2]]
+  type: PaletteType.RGB,
+  group: PaletteGroup.RGB,
+  data: [8, 8, 4]
 };

@@ -1,8 +1,7 @@
-import CompareFn from '../../colorDistance/CompareFn';
+import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
-import ColorPalette from '../../palette/ColorPalette';
-import PaletteType from '../../palette/PaletteGroups';
-import { expandRGBPalette } from '../../utils/utils';
+import Palette from '../../palette/Palette';
+import PaletteUtils from '../../palette/PaletteUtils';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
@@ -20,8 +19,8 @@ const threshold = [
 
 // Defines a potential mix of colors
 interface ColorMix {
-  color1: number[];
-  color2: number[];
+  color1: readonly number[];
+  color2: readonly number[];
   ratio: number; // Mix ratio between the colors, [0-1) in increments of 1/64
 }
 
@@ -38,31 +37,27 @@ function evalMixError(
 function processBayer(fast: boolean = true): ProcessFn {
   return (
     dataIn: ImageData,
-    palette: ColorPalette,
+    palette: Palette,
     distFn: CompareFn,
     features: ProcessFeatures,
     cbProgress: ProgressFn | null
   ) => {
-    // Expand an RGB palette into a fixed-color palette
-    // in order for the algorithm to work
-    if (palette.type === PaletteType.PRGB)
-      palette = expandRGBPalette(palette);
-
     const size = dataIn.width * dataIn.height * 4;
     const line = dataIn.width * 4;
+    const colors = PaletteUtils.getColors(palette);
 
     // Pre-calculate (weighted) distance between all permutations of two colors
     // in the given palette, this saves us a few million distance calculations
     const paletteDistances: { [key: number]: number } = {};
-    for (let i1 = 0; i1 < palette.data.length; i1++)
-      for (let i2 = i1; i2 < palette.data.length; i2++) {
-        const index = i1 * palette.data.length + i2; // A unique index
-        paletteDistances[index] = distFn(palette.data[i1], palette.data[i2]) * 0.1;
+    for (let i1 = 0; i1 < colors.length; i1++)
+      for (let i2 = i1; i2 < colors.length; i2++) {
+        const index = i1 * colors.length + i2; // A unique index
+        paletteDistances[index] = distFn(colors[i1], colors[i2]) * 0.1;
       }
 
     // Declare all heap-allocated variables to prevent unnecessary garbage collection
     const mix = [0, 0, 0];
-    let color: number[], cl1: number[], cl2: number[];
+    let color: number[], cl1: readonly number[], cl2: readonly number[];
     let bestMix: ColorMix;
 
     for (let i = 0; i < size; i += 4) {
@@ -74,10 +69,10 @@ function processBayer(fast: boolean = true): ProcessFn {
       bestMix = { color1: [0, 0, 0], color2: color, ratio: 0.33 };
       let minError = Number.MAX_VALUE;
 
-      for (let i1 = 0; i1 < palette.data.length; i1++)
-        for (let i2 = i1; i2 < palette.data.length; i2++) {
-          cl1 = palette.data[i1];
-          cl2 = palette.data[i2];
+      for (let i1 = 0; i1 < colors.length; i1++)
+        for (let i2 = i1; i2 < colors.length; i2++) {
+          cl1 = colors[i1];
+          cl2 = colors[i2];
 
           if (fast) {
             // Fast approximation of the 'proper' algorithm
@@ -95,7 +90,7 @@ function processBayer(fast: boolean = true): ProcessFn {
             for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
 
             // Get the distance between components we calculated earlier
-            const dist = paletteDistances[i1 * palette.data.length + i2];
+            const dist = paletteDistances[i1 * colors.length + i2];
             const error = evalMixError(color, mix, dist, r64 - 0.5, distFn);
             if (error < minError) {
               minError = error;
@@ -112,7 +107,7 @@ function processBayer(fast: boolean = true): ProcessFn {
               for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
 
               // Get the distance between components we calculated earlier
-              const dist = paletteDistances[i1 * palette.data.length + i2];
+              const dist = paletteDistances[i1 * colors.length + i2];
               const error = evalMixError(color, mix, dist, r64 - 0.5, distFn);
               if (error < minError) {
                 minError = error;
@@ -123,6 +118,7 @@ function processBayer(fast: boolean = true): ProcessFn {
             }
           }
         }
+
       for (let j = 0; j < 3; j++)
         dataIn.data[i + j] = mapValue < bestMix.ratio ?
           bestMix.color2[j] :

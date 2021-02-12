@@ -1,4 +1,4 @@
-export function gammaCorrect(color: number[], gamma: number, allowNegative: boolean = false): number[] {
+export function gammaCorrect(color: readonly number[], gamma: number = 2.2, allowNegative: boolean = false): number[] {
   const correct = [0, 0, 0];
   for (let i = 0; i < 3; i++) {
     if (allowNegative) {
@@ -9,7 +9,7 @@ export function gammaCorrect(color: number[], gamma: number, allowNegative: bool
   return correct;
 }
 
-export function gammaUncorrect(color: number[], gamma: number, allowNegative: boolean = false): number[] {
+export function gammaUncorrect(color: readonly number[], gamma: number = 2.2, allowNegative: boolean = false): number[] {
   const ungamma = 1 / gamma;
   const uncorrect = [0, 0, 0];
   for (let i = 0; i < 3; i++) {
@@ -21,14 +21,14 @@ export function gammaUncorrect(color: number[], gamma: number, allowNegative: bo
   return uncorrect;
 }
 
-export function gammaCorrectMC(value: number, gamma: number, allowNegative: boolean = false): number {
+export function gammaCorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
   if (allowNegative) {
     const sign = value < 0 ? -1 : 1;
     return sign * Math.pow(value * sign / 255, gamma);
   } else return Math.pow(value / 255, gamma);
 }
 
-export function gammaUnorrectMC(value: number, gamma: number, allowNegative: boolean = false): number {
+export function gammaUnorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
   const ungamma = 1 / gamma;
   if (allowNegative) {
     const sign = value < 0 ? -1 : 1;

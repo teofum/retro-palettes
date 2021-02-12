@@ -1,13 +1,13 @@
-import CompareFn from '../../colorDistance/CompareFn';
+import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
-import ColorPalette from '../../palette/ColorPalette';
+import Palette from '../../palette/Palette';
 import { paletteMap } from '../../palette/paletteMap';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
 const processBasic: ProcessFn = (
   dataIn: ImageData,
-  palette: ColorPalette,
+  palette: Palette,
   distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
@@ -16,7 +16,7 @@ const processBasic: ProcessFn = (
   const size = dataIn.width * dataIn.height * 4;
   for (let i = 0; i < size; i += 4) {
     const color = Array.from(dataIn.data.slice(i, i + 4));
-    const mapped: number[] = paletteMap(color, palette, distFn);
+    const mapped: readonly number[] = paletteMap(color, palette, distFn);
 
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = mapped[j];

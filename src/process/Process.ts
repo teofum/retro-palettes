@@ -1,6 +1,6 @@
-import CompareFn from '../colorDistance/CompareFn';
+import CompareFn from '../color/CompareFn';
 import { ProcessFeatures } from '../palette/applyPalette';
-import ColorPalette from '../palette/ColorPalette';
+import Palette from '../palette/Palette';
 import Basic from './processes/Basic';
 import { BayerLike, BayerLikeFast } from './processes/BayerLike';
 import FloydSteinberg from './processes/FloydSteinberg';
@@ -11,7 +11,7 @@ export type FeatureSupport = { [feature: string]: boolean };
 
 export type ProcessFn = (
   dataIn: ImageData,
-  palette: ColorPalette,
+  palette: Palette,
   distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null

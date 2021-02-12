@@ -1,15 +1,15 @@
-import CompareFn, { colDistLinearL, colDistRGB } from '../../colorDistance/CompareFn';
+import CompareFn, { colDistLinearL, colDistRGB } from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
-import ColorPalette from '../../palette/ColorPalette';
-import PaletteType from '../../palette/PaletteGroups';
+import Palette from '../../palette/Palette';
 import { paletteMap } from '../../palette/paletteMap';
+import PaletteUtils from '../../palette/PaletteUtils';
 import { linear2srgb, srgb2linear } from '../../utils/colorUtils';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
 const processFloydSteinberg: ProcessFn = (
   dataIn: ImageData,
-  palette: ColorPalette,
+  palette: Palette,
   distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
@@ -25,17 +25,12 @@ const processFloydSteinberg: ProcessFn = (
       if (i % (line * 4) === 0 && cbProgress) cbProgress(i, size, dataIn);
     }
 
-    palette = {
-      name: 'GENERATED_LINEAR',
-      type: PaletteType.POther,
-      useAlpha: false,
-      data: palette.data.map(color => srgb2linear(color))
-    };
+    palette = PaletteUtils.transform(palette, srgb2linear);
   }
 
   for (let i = 0; i < size; i += 4) {
     const color = Array.from(dataIn.data.slice(i, i + 3));
-    const mapped: number[] = paletteMap(color, palette, features.gamma ? colDistLinearL : colDistRGB);
+    const mapped: readonly number[] = paletteMap(color, palette, features.gamma ? colDistLinearL : colDistRGB);
 
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = (features.gamma ? linear2srgb(mapped) : mapped)[j];

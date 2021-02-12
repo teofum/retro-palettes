@@ -5,11 +5,10 @@ import Cmdr644b from './palette/palettes/Cmdr644b';
 import Win4bRGBI from './palette/palettes/Win4bRGBI';
 import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
-import { GameboyG, GameboyW } from './palette/palettes/Gameboy';
+import { GameBoy } from './palette/palettes/Gameboy';
 import { RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
 import Macintosh4b from './palette/palettes/Macintosh4b';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
-import { MonoA, MonoG, MonoW } from './palette/palettes/Mono';
 
 // Processes
 import Basic from './process/processes/Basic';
@@ -19,8 +18,10 @@ import WeightedColorMap from './process/processes/Weighted';
 
 // Utils and functions
 import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
-import { clearPaletteCache } from './paletteGen/getAutoPalette';
-import { loadFile, paletteSize } from './utils/utils';
+import { clearPaletteCache } from './palette/AutoPalette';
+import { loadFile } from './utils/utils';
+import { Mono2A, Mono2G, Mono2W, Mono4W } from './palette/palettes/Mono';
+import PaletteUtils from './palette/PaletteUtils';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -76,11 +77,11 @@ const palettes = [
   Win20cEx,
   CGA4bRGBI,
   ZX4bRGBI,
-  MonoW,
-  MonoA,
-  MonoG,
-  GameboyG,
-  GameboyW,
+  Mono2W,
+  Mono2G,
+  Mono2A,
+  Mono4W,
+  GameBoy,
   RGB8,
   RGB64,
   RGB256,
@@ -100,12 +101,12 @@ palettes.forEach(palette => {
   let group: HTMLOptGroupElement | undefined;
   const groups = paletteSelect.getElementsByTagName('optgroup');
   for (let i = 0; i < groups.length; i++)
-    if (groups[i].label === palette.type) group = groups[i];
+    if (groups[i].label === palette.group) group = groups[i];
 
   // If the group doesn't exist, create it
   if (!group) {
     group = document.createElement('optgroup');
-    group.label = palette.type;
+    group.label = palette.group;
     paletteSelect.appendChild(group);
   }
 
@@ -253,7 +254,7 @@ function updateEnabledProcs(): void {
     const option = procOpts[i] as HTMLOptionElement;
     const process = processes.find(proc => proc.name === option.value);
     if (process) {
-      option.disabled = !allowSlow.checked && process.maxAllowedPaletteSize < paletteSize(selectedPalette);
+      option.disabled = !allowSlow.checked && process.maxAllowedPaletteSize < PaletteUtils.getSize(selectedPalette);
     }
   }
 }
@@ -265,7 +266,7 @@ function updateEnabledPalettes(): void {
     const option = paletteOpts[i] as HTMLOptionElement;
     const palette = palettes.find(pal => pal.name === option.value);
     if (palette) {
-      option.disabled = !allowSlow.checked && selectedProcess.maxAllowedPaletteSize < paletteSize(palette);
+      option.disabled = !allowSlow.checked && selectedProcess.maxAllowedPaletteSize < PaletteUtils.getSize(palette);
     }
   }
 }

@@ -1,6 +1,8 @@
-import CompareFn from '../../colorDistance/CompareFn';
+import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
-import ColorPalette from '../../palette/ColorPalette';
+import Palette from '../../palette/Palette';
+import PaletteUtils from '../../palette/PaletteUtils';
+import { gammaCorrect } from '../../utils/gamma';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
@@ -18,7 +20,7 @@ const threshold = [
 
 const processWeightedColormap: ProcessFn = (
   dataIn: ImageData,
-  palette: ColorPalette,
+  palette: Palette,
   distFn: CompareFn,
   features: ProcessFeatures,
   cbProgress: ProgressFn | null
@@ -30,14 +32,18 @@ const processWeightedColormap: ProcessFn = (
   const line = dataIn.width * 4;
 
   const candidates: number[] = [];
-  let color: number[], pColor: number[];
+  let color: number[], pColor: readonly number[];
   let colorSum: number[], avgWithCandidate: number[];
 
   // Precalculate luminance table and gamma-corrected palette
-  const luma = palette.data.map(color => color[0] * 299 + color[0] * 587 + color[0] * 114);
-  const gPalette = (features.gamma) ?
-    palette.data.map(color => color.map(ch => Math.pow(ch / 255, gamma))) :
-    [];
+  const luma = PaletteUtils.getColors(palette)
+    .map(color => color[0] * 299 + color[1] * 587 + color[2] * 114);
+
+  const colors = PaletteUtils.getColors(
+    (features.gamma) ? 
+      PaletteUtils.transform(palette, gammaCorrect)
+      : palette
+  );
 
   for (let i = 0; i < size; i += 4) {
     color = Array.from(dataIn.data.slice(i, i + 4));
@@ -55,8 +61,8 @@ const processWeightedColormap: ProcessFn = (
       const maxWeight = (candidates.length || 1);
 
       // Pick best color in palette as new candidate
-      for (let p = 0; p < palette.data.length; p++) {
-        pColor = (features.gamma ? gPalette : palette.data)[p];
+      for (let p = 0; p < colors.length; p++) {
+        pColor = colors[p];
 
         for (let add = 1; add <= maxWeight; add *= 2) {
           // Sum if the candidate was added with its current weight (gamma -> standard)
@@ -76,13 +82,13 @@ const processWeightedColormap: ProcessFn = (
       }
 
       for (let j = 0; j < weight; j++) candidates.push(candidate);
-      colorSum = colorSum.map((ch, i) => ch + (features.gamma ? gPalette : palette.data)[candidate][i] * weight);
+      colorSum = colorSum.map((ch, i) => ch + colors[candidate][i] * weight);
     }
     candidates.sort((a, b) => luma[a] - luma[b]);
     const index = ~~(threshold[(x % 8) + (y % 8) * 8] * candidates.length);
 
     for (let j = 0; j < 3; j++)
-      dataIn.data[i + j] = palette.data[candidates[index]][j];
+      dataIn.data[i + j] = PaletteUtils.getColor(palette, candidates[index])[j];
 
     if (i % (4 * line) === 0 && cbProgress) cbProgress(i, size, dataIn);
   }

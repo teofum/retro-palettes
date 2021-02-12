@@ -1,6 +1,6 @@
 import ProcWorker from 'worker-loader!../worker';
 import { ImagePart, ProcessFeatures } from '../palette/applyPalette';
-import ColorPalette from '../palette/ColorPalette';
+import Palette from '../palette/Palette';
 
 enum ProcessEvent {
   Progress,
@@ -61,7 +61,7 @@ class ProcessWorker {
 
   public start(
     part: ImagePart,
-    palette: ColorPalette,
+    palette: Palette,
     procId: string,
     distFnId: string,
     features: ProcessFeatures
