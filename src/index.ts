@@ -50,7 +50,7 @@ const threadCount = document.getElementById('threadCount') as HTMLInputElement;
 // Buttons and warning banner
 const toggleAdvanced = document.getElementById('toggleAdvanced') as HTMLButtonElement;
 const toggleOriginal = document.getElementById('toggleOriginal') as HTMLButtonElement;
-const btnStop = document.getElementById('abort') as HTMLButtonElement;
+const startStop = document.getElementById('startStop') as HTMLButtonElement;
 const slowWarning = document.getElementById('slowWarning') as HTMLElement;
 
 // TODO: clean this up
@@ -60,7 +60,7 @@ allowSlow.addEventListener('change', function () {
   allowSlow.checked ?
     slowWarning.style.removeProperty('display') :
     slowWarning.style.setProperty('display', 'none');
-  
+
   updateEnabledProcs();
   updateEnabledPalettes();
 });
@@ -159,7 +159,6 @@ paletteSelect.addEventListener('change', function (ev: Event) {
   ) || selectedPalette;
 
   updateEnabledProcs();
-  update();
 });
 
 procSelect.addEventListener('change', function (ev: Event) {
@@ -168,7 +167,6 @@ procSelect.addEventListener('change', function (ev: Event) {
   ) || selectedProcess;
 
   updateEnabledPalettes();
-  update();
 });
 
 // Add file upload handling
@@ -192,7 +190,6 @@ function onLoad(img: HTMLImageElement): void {
 
   // Clear the cache of generated palettes
   clearPaletteCache();
-  update();
 }
 
 fileInput.addEventListener('change',
@@ -235,22 +232,24 @@ manualThreads.addEventListener('change', threadOptHandler);
 threadCount.addEventListener('change', threadOptHandler);
 
 // Stop button
-btnStop.addEventListener('click', () => {
-  terminateAllWorkers();
-  btnStop.disabled = true;
+let running = false;
+startStop.addEventListener('click', () => {
+  if (running) terminateAllWorkers();
+  else start();
 });
 
 // ================================================================================================ \\
 // Action functions ================================================================================ \\
 
-function update(): void {
+function start(): void {
   outputCanvas.classList.remove('flash-anim');
 
   const threads = !featThreads.checked ? 1 :
     (autoThreads.checked ? 'auto' :
       parseInt(threadCount.value, 10));
 
-  btnStop.disabled = false;
+  running = true;
+  startStop.innerHTML = 'Stop';
   processImageAsync(
     imageCanvas, outputCanvas,
     selectedPalette,
@@ -262,7 +261,8 @@ function update(): void {
     }
   ).then(() => {
     outputCanvas.classList.add('flash-anim');
-    btnStop.disabled = true;
+    startStop.innerHTML = 'Start';
+    running = false;
   });
 }
 

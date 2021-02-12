@@ -37,6 +37,7 @@ const processWeightedColormap: ProcessFn = (
   const luma = PaletteUtils.getColors(palette)
     .map(color => color[0] * 299 + color[1] * 587 + color[2] * 114);
 
+  const originalColors = PaletteUtils.getColors(palette);
   const colors = PaletteUtils.getColors(
     (features.gamma) ? 
       PaletteUtils.transform(palette, gammaCorrect)
@@ -89,7 +90,7 @@ const processWeightedColormap: ProcessFn = (
     const index = ~~(threshold[(x % 8) + (y % 8) * 8] * candidates.length);
 
     for (let j = 0; j < 3; j++)
-      dataIn.data[i + j] = PaletteUtils.getColor(palette, candidates[index])[j];
+      dataIn.data[i + j] = originalColors[candidates[index]][j];
 
     if (i % (4 * line) === 0 && cbProgress) cbProgress(i, size, dataIn);
   }
@@ -102,7 +103,7 @@ const WeightedColorMap: Process = {
   name: 'Ordered (Weighted Color Map)',
   procFn: processWeightedColormap,
 
-  maxAllowedPaletteSize: 256,
+  maxAllowedPaletteSize: 64,
   supports: {
     threads: true,
     gamma: true

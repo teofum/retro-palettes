@@ -8,8 +8,8 @@ export const DuoGM1: Palette = {
   group: PaletteGroup.Duo,
   data: [
     2, 0, 0, 0,
-    2, 0, 255, 0, 0,
-    2, 0, 0, 255, 255
+    2, 0, 0, 255, 0,
+    2, 0, 255, 0, 255
   ]
 };
 
@@ -75,6 +75,6 @@ export const DuoOB2: Palette = {
   data: [
     2, 0, 0, 0,
     4, 0, 240, 110, 50,
-    4, 0, 20, 75, 205
+    4, 0, 15, 45, 135
   ]
 };
