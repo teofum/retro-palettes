@@ -234,8 +234,11 @@ threadCount.addEventListener('change', threadOptHandler);
 // Stop button
 let running = false;
 startStop.addEventListener('click', () => {
-  if (running) terminateAllWorkers();
-  else start();
+  if (running) {
+    terminateAllWorkers();
+    startStop.innerHTML = 'Start';
+    running = false;
+  } else start();
 });
 
 // ================================================================================================ \\
