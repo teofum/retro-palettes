@@ -2,6 +2,7 @@ import { getColorDistanceFnById } from './color/CompareFn';
 import { ProcessFeatures } from './palette/applyPalette';
 import Palette from './palette/Palette';
 import { getProcessById } from './process/Process';
+import { initGammaLUT } from './utils/gamma';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ctx: Worker = self as any;
@@ -40,6 +41,8 @@ ctx.addEventListener('message', (ev: MessageEvent) => {
     self.close();
     return;
   }
+
+  initGammaLUT(2.2);
 
   const distFn = getColorDistanceFnById(msg.distFnId);
   process.procFn(msg.dataIn, msg.palette, distFn, msg.features, reportProgress);

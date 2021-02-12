@@ -1,37 +1,35 @@
-export function gammaCorrect(color: readonly number[], gamma: number = 2.2, allowNegative: boolean = false): number[] {
+const reverseLUT: number[] = Array.from({ length: 100001 });
+
+// Initialize a LUT for gamma correction values
+export function initGammaLUT(gamma: number): void {
+  for (let i = 0; i <= 100000; i++)
+    reverseLUT[i] = Math.pow(i/100000, 1/gamma) * 255;
+}
+
+export function gammaCorrect(color: readonly number[]): number[] {
   const correct = [0, 0, 0];
   for (let i = 0; i < 3; i++) {
-    if (allowNegative) {
-      const sign = color[i] < 0 ? -1 : 1;
-      correct[i] = sign * Math.pow(color[i] * sign / 255, gamma);
-    } else correct[i] = Math.pow(color[i] / 255, gamma);
+    correct[i] = Math.pow(color[i] / 255, 2.2);
   }
   return correct;
 }
 
-export function gammaUncorrect(color: readonly number[], gamma: number = 2.2, allowNegative: boolean = false): number[] {
-  const ungamma = 1 / gamma;
+export function gammaUncorrect(color: readonly number[]): number[] {
   const uncorrect = [0, 0, 0];
   for (let i = 0; i < 3; i++) {
-    if (allowNegative) {
-      const sign = color[i] < 0 ? -1 : 1;
-      uncorrect[i] = sign * Math.pow(color[i] * sign, ungamma) * 255;
-    } else uncorrect[i] = Math.pow(color[i], ungamma) * 255;
+    if (color[i] === 0) uncorrect[i] = 0;
+    else if (color[i] < 0) uncorrect[i] = -1 * reverseLUT[~~(-color[i] * 100000)];
+    else uncorrect[i] = reverseLUT[~~(color[i] * 100000)];
   }
   return uncorrect;
 }
 
-export function gammaCorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
-  if (allowNegative) {
-    const sign = value < 0 ? -1 : 1;
-    return sign * Math.pow(value * sign / 255, gamma);
-  } else return Math.pow(value / 255, gamma);
+export function gammaCorrectMC(value: number): number {
+  return Math.pow(value / 255, 2.2);
 }
 
-export function gammaUncorrectMC(value: number, gamma: number = 2.2, allowNegative: boolean = false): number {
-  const ungamma = 1 / gamma;
-  if (allowNegative) {
-    const sign = value < 0 ? -1 : 1;
-    return sign * Math.pow(value * sign, ungamma) * 255;
-  } else return Math.pow(value, ungamma) * 255;
+export function gammaUncorrectMC(value: number): number {
+  if (value === 0) return 0;
+  if (value < 0) return -1 * reverseLUT[~~(-value * 100000)];
+  return reverseLUT[~~(value * 100000)];
 }

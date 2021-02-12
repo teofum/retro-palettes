@@ -2,6 +2,7 @@ import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import Palette from '../../palette/Palette';
 import PaletteUtils from '../../palette/PaletteUtils';
+import { gammaCorrect, gammaUncorrect } from '../../utils/gamma';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
@@ -55,9 +56,14 @@ function processBayer(fast: boolean = true): ProcessFn {
         paletteDistances[index] = distFn(colors[i1], colors[i2]) * 0.1;
       }
 
+    const gammaColors = features.gamma ?
+      PaletteUtils.getColors(PaletteUtils.transform(palette, gammaCorrect)) :
+      [];
+
     // Declare all heap-allocated variables to prevent unnecessary garbage collection
     const mix = [0, 0, 0];
     let color: number[], cl1: readonly number[], cl2: readonly number[];
+    let g1: readonly number[] = [], g2: readonly number[] = [];
     let bestMix: ColorMix;
 
     for (let i = 0; i < size; i += 4) {
@@ -74,6 +80,11 @@ function processBayer(fast: boolean = true): ProcessFn {
           cl1 = colors[i1];
           cl2 = colors[i2];
 
+          if (features.gamma) {
+            g1 = gammaColors[i1];
+            g2 = gammaColors[i2];
+          }
+
           if (fast) {
             // Fast approximation of the 'proper' algorithm
             let ratio = 32;
@@ -87,11 +98,12 @@ function processBayer(fast: boolean = true): ProcessFn {
               ratio = ~~ratio; // Fast floor (to integer)
             }
             const r64 = ratio / 64;
-            for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
+            if (features.gamma) for (let j = 0; j < 3; j++) mix[j] = g1[j] + r64 * (g2[j] - g1[j]);
+            else for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
 
             // Get the distance between components we calculated earlier
             const dist = paletteDistances[i1 * colors.length + i2];
-            const error = evalMixError(color, mix, dist, r64 - 0.5, distFn);
+            const error = evalMixError(color, features.gamma ? gammaUncorrect(mix) : mix, dist, r64 - 0.5, distFn);
             if (error < minError) {
               minError = error;
               bestMix.color1 = cl1;
@@ -104,11 +116,12 @@ function processBayer(fast: boolean = true): ProcessFn {
             for (let ratio = 0; ratio < 64; ratio++) {
               if (i1 === i2 && ratio > 0) break;
               const r64 = ratio / 64;
-              for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
+              if (features.gamma) for (let j = 0; j < 3; j++) mix[j] = g1[j] + r64 * (g2[j] - g1[j]);
+              else for (let j = 0; j < 3; j++) mix[j] = cl1[j] + r64 * (cl2[j] - cl1[j]);
 
               // Get the distance between components we calculated earlier
               const dist = paletteDistances[i1 * colors.length + i2];
-              const error = evalMixError(color, mix, dist, r64 - 0.5, distFn);
+              const error = evalMixError(color, features.gamma ? gammaUncorrect(mix) : mix, dist, r64 - 0.5, distFn);
               if (error < minError) {
                 minError = error;
                 bestMix.color1 = cl1;
@@ -135,7 +148,7 @@ export const BayerLikeFast: Process = {
   id: 'ProcBayerLikeFast',
   name: 'Bayer-like – Fast',
   procFn: processBayer(),
-  
+
   maxAllowedPaletteSize: 192,
   supports: {
     threads: true,
@@ -148,7 +161,7 @@ export const BayerLike: Process = {
   id: 'ProcBayerLikeThorough',
   name: 'Bayer-like – High Quality',
   procFn: processBayer(false),
-  
+
   maxAllowedPaletteSize: 24,
   supports: {
     threads: true,

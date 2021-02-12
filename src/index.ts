@@ -25,9 +25,12 @@ import { clearPaletteCache } from './palette/AutoPalette';
 import { loadFile } from './utils/utils';
 import PaletteUtils from './palette/PaletteUtils';
 import MinAverageError from './process/processes/MinAverageError';
+import { initGammaLUT } from './utils/gamma';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
+
+initGammaLUT(2.2);
 
 // Get both canvas elements and contexts
 const imageCanvas = document.getElementById('canvasOriginal') as HTMLCanvasElement;
@@ -53,6 +56,7 @@ const toggleAdvanced = document.getElementById('toggleAdvanced') as HTMLButtonEl
 const toggleOriginal = document.getElementById('toggleOriginal') as HTMLButtonElement;
 const startStop = document.getElementById('startStop') as HTMLButtonElement;
 const slowWarning = document.getElementById('slowWarning') as HTMLElement;
+const flashDiv = document.getElementById('flash') as HTMLElement;
 
 // TODO: clean this up
 const imageContext = imageCanvas.getContext('2d');
@@ -252,7 +256,7 @@ startStop.addEventListener('click', () => {
 // Action functions ================================================================================ \\
 
 function start(): void {
-  outputCanvas.classList.remove('flash-anim');
+  flashDiv.classList.remove('flash-anim');
 
   const threads = !featThreads.checked ? 1 :
     (autoThreads.checked ? 'auto' :
@@ -270,7 +274,7 @@ function start(): void {
       threads: threads
     }
   ).then(() => {
-    outputCanvas.classList.add('flash-anim');
+    flashDiv.classList.add('flash-anim');
     startStop.innerHTML = 'Start';
     running = false;
   });
