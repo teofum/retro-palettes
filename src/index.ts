@@ -55,6 +55,7 @@ const slowWarning = document.getElementById('slowWarning') as HTMLElement;
 
 // TODO: clean this up
 const imageContext = imageCanvas.getContext('2d');
+const outputContext = outputCanvas.getContext('2d');
 
 allowSlow.addEventListener('change', function () {
   allowSlow.checked ?
@@ -187,6 +188,10 @@ function onLoad(img: HTMLImageElement): void {
   imageCanvas.width = w;
   imageCanvas.height = h;
   imageContext?.drawImage(img, 0, 0, w, h);
+  
+  outputCanvas.width = w;
+  outputCanvas.height = h;
+  outputContext?.clearRect(0, 0, w, h);
 
   // Clear the cache of generated palettes
   clearPaletteCache();
