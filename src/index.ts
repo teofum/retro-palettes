@@ -20,7 +20,7 @@ import WeightedColorMap from './process/processes/Weighted';
 import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
 import { clearPaletteCache } from './palette/AutoPalette';
 import { loadFile } from './utils/utils';
-import { Mono2A, Mono2G, Mono2W, Mono4W } from './palette/palettes/Mono';
+import { Mono2A, Mono2G, Mono2W, Mono4A, Mono4W, Mono16, PipBoy } from './palette/palettes/Mono';
 import PaletteUtils from './palette/PaletteUtils';
 
 // ================================================================================================ \\
@@ -81,7 +81,10 @@ const palettes = [
   Mono2G,
   Mono2A,
   Mono4W,
+  Mono4A,
+  Mono16,
   GameBoy,
+  PipBoy,
   RGB8,
   RGB64,
   RGB256,

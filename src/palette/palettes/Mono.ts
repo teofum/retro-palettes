@@ -29,3 +29,25 @@ export const Mono4W: Palette = {
   group: PaletteGroup.Mono,
   data: [4, 255, 255, 255, 0]
 };
+
+export const Mono4A: Palette = {
+  name: '4-tone Amber (2-bit MC)',
+  type: PaletteType.Mono,
+  group: PaletteGroup.Mono,
+  data: [4, 255, 200, 15, 0.04]
+};
+
+export const Mono16: Palette = {
+  name: '16-tone Greyscale (4-bit MC)',
+  type: PaletteType.Mono,
+  group: PaletteGroup.Mono,
+  data: [16, 255, 255, 255, 0]
+};
+
+export const PipBoy: Palette = {
+  name: 'Pip-Boy 3000 (2-bit MC)',
+  type: PaletteType.Mono,
+  group: PaletteGroup.Mono,
+  data: [4, 64, 252, 155, 0.15]
+};
+
