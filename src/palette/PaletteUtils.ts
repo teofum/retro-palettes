@@ -13,12 +13,13 @@ class PaletteUtils {
       case PaletteType.RGB:
         return palette.data[0] * palette.data[1] * palette.data[2];
       case PaletteType.Auto:
+        return palette.data[0];
       default:
         return 0;
     }
   }
 
-  public static getColor(palette: Palette, i: number): readonly number[] {
+  public static getColor(palette: Palette, i: number): number[] {
     if (i < 0 || i >= this.getSize(palette)) throw new Error(`Color index ${i} out of bounds`);
 
     switch (palette.type) {
@@ -43,7 +44,7 @@ class PaletteUtils {
     }
   }
 
-  public static getColors(palette: Palette): readonly (readonly number[])[] {
+  public static getColors(palette: Palette): number[][] {
     return Array.from(
       { length: this.getSize(palette) },
       (_, i) => this.getColor(palette, i)

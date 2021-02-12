@@ -17,6 +17,8 @@ const processFloydSteinberg: ProcessFn = (
   const size = dataIn.width * dataIn.height * 4;
   const line = dataIn.width * 4;
 
+  const colors = PaletteUtils.getColors(palette);
+
   if (features.gamma) {
     for (let i = 0; i < size; i += 4) {
       const linear = srgb2linear(Array.from(dataIn.data.slice(i, i + 3)));
@@ -25,12 +27,13 @@ const processFloydSteinberg: ProcessFn = (
       if (i % (line * 4) === 0 && cbProgress) cbProgress(i, size, dataIn);
     }
 
-    palette = PaletteUtils.transform(palette, srgb2linear);
+    for (let i = 0; i < colors.length; i++)
+      colors[i] = srgb2linear(colors[i]);
   }
 
   for (let i = 0; i < size; i += 4) {
     const color = Array.from(dataIn.data.slice(i, i + 3));
-    const mapped: readonly number[] = paletteMap(color, palette, features.gamma ? colDistLinearL : colDistRGB);
+    const mapped: readonly number[] = paletteMap(color, colors, features.gamma ? colDistLinearL : colDistRGB);
 
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = (features.gamma ? linear2srgb(mapped) : mapped)[j];

@@ -2,6 +2,7 @@ import CompareFn from '../../color/CompareFn';
 import { ProcessFeatures } from '../../palette/applyPalette';
 import Palette from '../../palette/Palette';
 import { paletteMap } from '../../palette/paletteMap';
+import PaletteUtils from '../../palette/PaletteUtils';
 import { Process, ProcessFn } from '../Process';
 import { ProgressFn } from '../ProcessWorker';
 
@@ -14,9 +15,11 @@ const processBasic: ProcessFn = (
 ) => {
   const line = dataIn.width * 4;
   const size = dataIn.width * dataIn.height * 4;
+  const colors = PaletteUtils.getColors(palette);
+  
   for (let i = 0; i < size; i += 4) {
     const color = Array.from(dataIn.data.slice(i, i + 4));
-    const mapped: readonly number[] = paletteMap(color, palette, distFn);
+    const mapped: readonly number[] = paletteMap(color, colors, distFn);
 
     for (let j = 0; j < 3; j++)
       dataIn.data[i + j] = mapped[j];
