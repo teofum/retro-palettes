@@ -2,12 +2,15 @@
 import { CGAm4p0h, CGAm4p0l, CGAm4p1h, CGAm4p1l, CGAm5h, CGAm5l } from './palette/palettes/CGA2bModes';
 import CGA4bRGBI from './palette/palettes/CGA4bRGBI';
 import Cmdr644b from './palette/palettes/Cmdr644b';
+import Macintosh4b from './palette/palettes/Macintosh4b';
 import Win4bRGBI from './palette/palettes/Win4bRGBI';
 import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameBoy } from './palette/palettes/Gameboy';
 import { RGB16, RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
-import Macintosh4b from './palette/palettes/Macintosh4b';
+import { Mono2A, Mono2G, Mono2W, Mono4A, Mono4W, Mono16, PipBoy } from './palette/palettes/Mono';
+import { DuoBY2, DuoGM2, DuoOG2, DuoGM1, DuoRC2, DuoWA2, DuoOB2 } from './palette/palettes/Duo';
+import { CMYK16, CMYK64, CMYK256, CMYKU1, CMYKU2, CMYKU4 } from './palette/palettes/CMYK';
 import { Auto16, Auto256, Auto64 } from './palette/palettes/Auto';
 
 // Processes
@@ -20,10 +23,7 @@ import WeightedColorMap from './process/processes/Weighted';
 import { processImageAsync, terminateAllWorkers, threadsAvailable } from './palette/applyPalette';
 import { clearPaletteCache } from './palette/AutoPalette';
 import { loadFile } from './utils/utils';
-import { Mono2A, Mono2G, Mono2W, Mono4A, Mono4W, Mono16, PipBoy } from './palette/palettes/Mono';
 import PaletteUtils from './palette/PaletteUtils';
-import { DuoBY2, DuoGM2, DuoOG2, DuoRC1, DuoRC2, DuoWA2 } from './palette/palettes/Duo';
-import CMYK from './palette/palettes/CMYK';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -87,12 +87,13 @@ const palettes = [
   Mono16,
   GameBoy,
   PipBoy,
-  DuoRC1,
+  DuoGM1,
   DuoRC2,
   DuoGM2,
   DuoBY2,
   DuoWA2,
   DuoOG2,
+  DuoOB2,
   RGB8,
   RGB16,
   RGB64,
@@ -100,7 +101,12 @@ const palettes = [
   Auto16,
   Auto64,
   Auto256,
-  CMYK
+  CMYKU1,
+  CMYKU2,
+  CMYKU4,
+  CMYK16,
+  CMYK64,
+  CMYK256
 ];
 let selectedPalette = Win4bRGBI;
 

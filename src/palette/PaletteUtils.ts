@@ -10,10 +10,15 @@ class PaletteUtils {
         return palette.data.length / 3;
       case PaletteType.Mono:
         return palette.data[0];
-      case PaletteType.DualTone:
-        return palette.data[0] * palette.data[1];
       case PaletteType.RGB:
         return palette.data[0] * palette.data[1] * palette.data[2];
+      case PaletteType.Mixer: {
+        const inputCount = (palette.data.length - 4) / 5;
+        let colors = 1;
+        for (let i = 0; i < inputCount; i++)
+          colors *= palette.data[4 + i * 5];
+        return colors;
+      }
       case PaletteType.Auto:
         return palette.data[0];
       default:
@@ -33,20 +38,8 @@ class PaletteUtils {
           const vRange = vMax - vMin;
           return vMin + i * ~~(vRange / (palette.data[0] - 1));
         });
-      case PaletteType.DualTone: {
-        const value: number[] = [0, 0, 0];
-        // For each color add to value
-        for (let j = 0; j < 2; j++) {
-          // Decode step for this channel
-          const step = j === 0 ? (i % palette.data[0]) : ~~(i / palette.data[0]);
-          // Get max value, calculate min value, step, and value component
-          palette.data.slice(4 + j * 3, 7 + j * 3).forEach((vMax, k) => {
-            const vMin = vMax * palette.data[2 + j];
-            const vRange = vMax - vMin;
-            value[k] += vMin + step * ~~(vRange / (palette.data[j] - 1));
-          });
-        }
-        return value;
+      case PaletteType.Mixer: {
+        return this.getMixerColor(palette, i);
       }
       case PaletteType.RGB: {
         const b = i % palette.data[2];
@@ -76,6 +69,37 @@ class PaletteUtils {
       group: PaletteGroup.Generated,
       data: colors.reduce((flat, color) => flat.concat(color))
     };
+  }
+
+  private static getMixerColor(palette: Palette, index: number): number[] {
+    const header = palette.data.slice(0, 4);
+    const sub = header[1] === 1;
+    const inputCount = (palette.data.length - 4) / 5;
+    const value: number[] = sub ? [255, 255, 255] : [0, 0, 0];
+
+    // Extract different properties from data
+    const levels = (i: number) => palette.data[4 + i * 5];
+    const minValue = (i: number) => palette.data[5 + i * 5];
+    const color = (i: number) => palette.data.slice(6 + i * 5, 9 + i * 5);
+    const step = (i: number) => {
+      let step = index;
+      for (let j = 0; j < i; j++) step = ~~(step / levels(j));
+      return step % levels(i);
+    };
+
+    // For each color add to value
+    for (let i = 0; i < inputCount; i++) {
+      // Get max value, calculate min value, step, and value component
+      color(i).forEach((vMax, j) => {
+        if (sub) vMax = 255 - vMax;
+        const vMin = vMax * minValue(i);
+        const vRange = vMax - vMin;
+        const vChannel = vMin + step(i) * ~~(vRange / (levels(i) - 1));
+        value[j] += sub ? (-vChannel) : vChannel;
+        if (value[j] < 0) value[j] = 0;
+      });
+    }
+    return value;
   }
 }
 
