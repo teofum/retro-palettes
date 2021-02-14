@@ -3,9 +3,9 @@ import PaletteGroup from '../PaletteGroup';
 import PaletteType from '../PaletteType';
 
 const Cmdr644b: Palette = {
-  name: 'Commodore 64',
+  name: 'Commodore 64 (*)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed4Bit,
+  group: PaletteGroup.RetroPC,
   data: [
     0x00, 0x00, 0x00, // Black
     0x62, 0x62, 0x52, // Dark Gray

@@ -4,7 +4,7 @@ import CompareFn from '../color/CompareFn';
 // Uses a simple distance check
 export function paletteMap(
   color: number[],
-  palette: readonly (readonly number[])[],
+  palette: number[][],
   distFn: CompareFn
 ): readonly number[] {
   let closest: readonly number[] = [];

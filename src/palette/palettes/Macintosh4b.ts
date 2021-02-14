@@ -5,7 +5,7 @@ import PaletteType from '../PaletteType';
 const Macintosh4b: Palette = {
   name: 'Macintosh II (1987)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed4Bit,
+  group: PaletteGroup.RetroPC,
   data: [
     0xFF, 0xFF, 0xFF, // White
     0xFF, 0xFF, 0x00, // Yellow

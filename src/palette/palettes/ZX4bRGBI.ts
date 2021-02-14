@@ -5,7 +5,7 @@ import PaletteType from '../PaletteType';
 const ZX4bRGBI: Palette = {
   name: 'ZX Spectrum 4-bit RGBI',
   type: PaletteType.Indexed,
-  group: PaletteGroup.RGBI,
+  group: PaletteGroup.RetroPC,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0x00, 0xD7, // Blue

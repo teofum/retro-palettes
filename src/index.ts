@@ -26,6 +26,8 @@ import { loadFile } from './utils/utils';
 import PaletteUtils from './palette/PaletteUtils';
 import MinAverageError from './process/processes/MinAverageError';
 import { initGammaLUT } from './utils/gamma';
+import { AppleII4b, AppleIIGS, AppleIIHR } from './palette/palettes/AppleII';
+import NES56 from './palette/palettes/NES';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -79,19 +81,23 @@ const palettes = [
   CGAm4p1h,
   CGAm5l,
   CGAm5h,
+  AppleII4b,
+  AppleIIHR,
+  AppleIIGS,
   Cmdr644b,
+  CGA4bRGBI,
   Macintosh4b,
   Win4bRGBI,
   Win20cEx,
-  CGA4bRGBI,
   ZX4bRGBI,
+  GameBoy,
+  NES56,
   Mono2W,
   Mono2G,
   Mono2A,
   Mono4W,
   Mono4A,
   Mono16,
-  GameBoy,
   PipBoy,
   DuoGM1,
   DuoRC2,
@@ -104,15 +110,15 @@ const palettes = [
   RGB16,
   RGB64,
   RGB256,
-  Auto16,
-  Auto64,
-  Auto256,
   CMYKU1,
   CMYKU2,
   CMYKU4,
   CMYK16,
   CMYK64,
-  CMYK256
+  CMYK256,
+  Auto16,
+  Auto64,
+  Auto256
 ];
 let selectedPalette = Win4bRGBI;
 

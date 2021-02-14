@@ -5,7 +5,7 @@ import PaletteType from '../PaletteType';
 export const CGAm4p0l: Palette = {
   name: 'CGA Mode 4 Palette 0 (low)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0xAA, 0x00, // Green
@@ -17,7 +17,7 @@ export const CGAm4p0l: Palette = {
 export const CGAm4p0h: Palette = {
   name: 'CGA Mode 4 Palette 0 (high)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x55, 0xFF, 0x55, // Light Green
@@ -29,7 +29,7 @@ export const CGAm4p0h: Palette = {
 export const CGAm4p1l: Palette = {
   name: 'CGA Mode 4 Palette 1 (low)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0xAA, 0xAA, // Cyan
@@ -41,7 +41,7 @@ export const CGAm4p1l: Palette = {
 export const CGAm4p1h: Palette = {
   name: 'CGA Mode 4 Palette 1 (high)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x55, 0xFF, 0xFF, // Light Cyan
@@ -53,7 +53,7 @@ export const CGAm4p1h: Palette = {
 export const CGAm5l: Palette = {
   name: 'CGA Mode 5 (low)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0xAA, 0xAA, // Cyan
@@ -65,7 +65,7 @@ export const CGAm5l: Palette = {
 export const CGAm5h: Palette = {
   name: 'CGA Mode 5 (high)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed2Bit,
+  group: PaletteGroup.CGA2Bit,
   data: [
     0x00, 0x00, 0x00, // Black
     0x55, 0xFF, 0xFF, // Light Cyan

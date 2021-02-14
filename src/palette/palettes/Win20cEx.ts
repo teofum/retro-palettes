@@ -6,7 +6,7 @@ import PaletteType from '../PaletteType';
 const Win20cEx: Palette = {
   name: 'Windows 20-color Extended RGBI',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Indexed4Bit,
+  group: PaletteGroup.RetroPC,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0x00, 0x80, // Dark Blue

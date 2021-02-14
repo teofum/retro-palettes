@@ -5,7 +5,7 @@ import PaletteType from '../PaletteType';
 export const CMYKU1: Palette = {
   name: 'CMYK (Unmixed, 1 level)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     255, 255, 255,
     0, 174, 239,
@@ -18,7 +18,7 @@ export const CMYKU1: Palette = {
 export const CMYKU2: Palette = {
   name: 'CMYK (Unmixed, 2 levels)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     255, 255, 255,
     128, 214, 247,
@@ -35,7 +35,7 @@ export const CMYKU2: Palette = {
 export const CMYKU4: Palette = {
   name: 'CMYK (Unmixed, 4 levels)',
   type: PaletteType.Indexed,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     255, 255, 255,
     192, 235, 251,
@@ -60,7 +60,7 @@ export const CMYKU4: Palette = {
 export const CMYK16: Palette = {
   name: '16-color CMYK (4-bit, 1bpc)',
   type: PaletteType.Mixer,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     4, 1, 0, 0,
     2, 0, 0, 174, 239,
@@ -73,7 +73,7 @@ export const CMYK16: Palette = {
 export const CMYK64: Palette = {
   name: '64-color CMYK (6-bit, 1-1-1-3)',
   type: PaletteType.Mixer,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     4, 1, 0, 0,
     2, 0, 0, 174, 239,
@@ -86,7 +86,7 @@ export const CMYK64: Palette = {
 export const CMYK256: Palette = {
   name: '256-color CMYK (8-bit, 2bpc)',
   type: PaletteType.Mixer,
-  group: PaletteGroup.Other,
+  group: PaletteGroup.CMYK,
   data: [
     4, 1, 0, 0,
     4, 0, 0, 174, 239,

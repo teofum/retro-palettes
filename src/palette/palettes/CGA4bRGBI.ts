@@ -3,9 +3,9 @@ import PaletteGroup from '../PaletteGroup';
 import PaletteType from '../PaletteType';
 
 const CGA4bRGBI: Palette = {
-  name: 'CGA 4-bit RGBI (IBM)',
+  name: 'IBM CGA 4-bit RGBI',
   type: PaletteType.Indexed,
-  group: PaletteGroup.RGBI,
+  group: PaletteGroup.RetroPC,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0x00, 0xAA, // Blue

@@ -5,7 +5,7 @@ import PaletteType from '../PaletteType';
 const Win4bRGBI: Palette = {
   name: 'Windows 4-bit RGBI',
   type: PaletteType.Indexed,
-  group: PaletteGroup.RGBI,
+  group: PaletteGroup.RetroPC,
   data: [
     0x00, 0x00, 0x00, // Black
     0x00, 0x00, 0x80, // Dark Blue

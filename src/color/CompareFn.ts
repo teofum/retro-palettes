@@ -1,14 +1,14 @@
 import { linear2srgb, luma_srgb, srgb2lab } from '../utils/colorUtils';
 import { vec3distance } from '../utils/utils';
 
-type CompareFn = (color1: readonly number[], color2: readonly number[]) => number;
+type CompareFn = (color1: number[], color2: number[]) => number;
 
 // Simple, fast sRGB space distance calculation.
-export function colDistRGB(color1: readonly number[], color2: readonly number[]): number {
+export function colDistRGB(color1: number[], color2: number[]): number {
   return vec3distance(color1, color2);
 }
 
-export function colDistRGBL(color1: readonly number[], color2: readonly number[]): number {
+export function colDistRGBL(color1: number[], color2: number[]): number {
   const luma1 = luma_srgb(color1), luma2 = luma_srgb(color2);
   const dLuma = luma1 - luma2;
   const dColor = color1.map((ch, i) => ch - color2[i]);

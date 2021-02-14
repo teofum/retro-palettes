@@ -6,7 +6,7 @@ export const Auto16: Palette = {
   name: 'Auto 16-color (4-bit indexed)',
   type: PaletteType.Auto,
   group: PaletteGroup.Auto,
-  data: [16, -1, 4, 1]
+  data: [16, -1, 5, 1]
 };
 
 export const Auto64: Palette = {
