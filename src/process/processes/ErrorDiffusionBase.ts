@@ -1,5 +1,5 @@
 import CompareFn, { colDistLinearL as colDistLinear, colDistRGB } from '../../color/CompareFn';
-import { ProcessFeatures } from '../../utils/RenderUtils';
+import { ProcessFeatures } from '../../render/RenderUtils';
 import Palette from '../../palette/Palette';
 import { paletteMap } from '../../palette/paletteMap';
 import PaletteUtils from '../../palette/PaletteUtils';

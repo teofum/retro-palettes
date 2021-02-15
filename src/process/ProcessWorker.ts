@@ -1,5 +1,5 @@
 import ProcWorker from 'worker-loader!../worker';
-import { ImagePart, ProcessFeatures } from '../utils/RenderUtils';
+import { ImagePart, ProcessFeatures } from '../render/RenderUtils';
 import Palette from '../palette/Palette';
 
 enum ProcessEvent {
