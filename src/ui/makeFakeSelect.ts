@@ -32,7 +32,7 @@ export function makeFakeSelect(
   });
 
   const selectButtonImg = document.createElement('img');
-  selectButtonImg.src = '/public/img/scrolldown.png';
+  selectButtonImg.src = 'public/img/scrolldown.png';
 
   const selectButton = document.createElement('button');
   selectButton.className = 'fake-select-button win-bevel';

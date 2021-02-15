@@ -18,7 +18,7 @@ class RenderWindow extends UIWindow {
   public get outputCanvas(): HTMLCanvasElement { return this.outputCanvasRef; }
 
   constructor(title: string, renderSize: { w: number, h: number }) {
-    super(title, '/public/img/result.png');
+    super(title, 'public/img/result.png');
 
     // Append an input and output canvas
     this.inputCanvasRef = document.createElement('canvas') as HTMLCanvasElement;
