@@ -1,5 +1,5 @@
 import { getColorDistanceFnById } from './color/CompareFn';
-import { ProcessFeatures } from './palette/applyPalette';
+import { ProcessFeatures } from './utils/RenderUtils';
 import Palette from './palette/Palette';
 import { getProcessById } from './process/Process';
 import { initGammaLUT } from './utils/gamma';

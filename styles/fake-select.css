@@ -1,0 +1,58 @@
+.fake-select {
+  position: relative;
+}
+
+.fake-select input.fake-select-input {
+  width: 100%;
+  background: white;
+  color: black;
+  text-shadow: none;
+}
+
+.fake-select button.fake-select-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  padding: 3px 2px;
+}
+
+.fake-select-option-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+
+  background: white;
+  border: 1px solid black;
+  
+  max-height: 210px; /* (options) * 13 + 2 */
+  overflow: auto;
+  z-index: 100000;
+}
+
+.fake-select-option-list:not(.expanded) {
+  display: none;
+}
+
+.fake-select-option {
+  padding: 1px 2px 0;
+  cursor: default;
+}
+
+.fake-select-option:not([disabled]):hover {
+  background: var(--win-blue-dark);
+  color: white;
+  position: relative;
+}
+
+.fake-select-option:not([disabled]):hover::before {
+  content: '';
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  
+  border: 1px dotted #FFFF80;
+}

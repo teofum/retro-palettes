@@ -1,0 +1,220 @@
+/* Theme resets ============================================================= */
+
+body {
+  overflow: hidden;
+}
+
+button {
+  border: none;
+  outline: none;
+}
+
+/* Theme font =============================================================== */
+
+@font-face {
+  font-family: 'MS Sans 98';
+  src: url('/public/font/MS_Sans_Serif.ttf');
+}
+
+:root {
+  font-family: 'MS Sans 98';
+  font-size: 8px;
+}
+
+body {
+  /* Font size specified here because 1rem=11px is awful */
+  font-size: 1.375em;
+
+  /* Filter hack to force disable text AA for that crisp pixel-perfect look */
+  filter: grayscale(0.000000001);
+}
+
+b, .bold {
+  font-weight: normal;
+  text-shadow: 1px 0 currentColor;
+  letter-spacing: 1px;
+}
+
+[disabled] {
+  color: var(--win-dark);
+  text-shadow: 1px 1px var(--win-lighter);
+}
+
+b[disabled],
+.bold[disabled],
+b [disabled],
+.bold [disabled],
+[disabled] b,
+[disabled] .bold {
+  text-shadow:
+    1px 0 currentColor,
+    1px 1px var(--win-lighter),
+    2px 1px var(--win-lighter);
+}
+
+/* Color theme ============================================================== */
+
+:root {
+  --win-background: #008080;
+
+  --win-base: #c0c0c0;
+  --win-dark: #808080;
+  --win-darker: #000000;
+  --win-light: #dedede;
+  --win-lighter: #ffffff;
+
+  --win-blue-dark: #000080;
+  --win-blue-light: #0000ff;
+
+  --win-title-inactive-start: #7b7b7b;
+  --win-title-inactive-end: #adadad;
+  --win-title-inactive: linear-gradient(to right,
+    var(--win-title-inactive-start),
+    var(--win-title-inactive-end));
+  
+  --win-title-active-start: #000080;
+  --win-title-active-end: #1084d0;
+  --win-title-active: linear-gradient(to right,
+    var(--win-title-active-start),
+    var(--win-title-active-end));
+}
+
+/* Theme classes ============================================================ */
+
+.win-bevel {
+  background: var(--win-base);
+  padding: 2px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-darker),
+    inset 1px 1px 0 0 var(--win-lighter),
+    inset -2px -2px 0 0 var(--win-dark),
+    inset 2px 2px 0 0 var(--win-light);
+}
+
+.win-bevel.inset,
+.win-bevel.inset-active:active,
+button.win-bevel:active {
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-lighter),
+    inset 1px 1px 0 0 var(--win-darker),
+    inset -2px -2px 0 0 var(--win-light),
+    inset 2px 2px 0 0 var(--win-dark);
+}
+
+input.win-bevel {
+  padding: 5px 6px;
+  border: none;
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-lighter),
+    inset 1px 1px 0 0 var(--win-dark),
+    inset -2px -2px 0 0 var(--win-light),
+    inset 2px 2px 0 0 var(--win-darker);
+}
+
+input.win-bevel:not([disabled]) {
+  background: var(--win-lighter);
+}
+
+.win-bevel.checkbox {
+  background: var(--win-lighter);
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-lighter),
+    inset 1px 1px 0 0 var(--win-dark),
+    inset -2px -2px 0 0 var(--win-light),
+    inset 2px 2px 0 0 var(--win-darker);
+}
+
+.win-bevel.window-content,
+.win-bevel.content {
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-lighter),
+    inset 1px 1px 0 0 var(--win-dark),
+    inset -2px -2px 0 0 var(--win-light),
+    inset 2px 2px 0 0 var(--win-darker);
+}
+
+.win-bevel.window {
+  padding: 4px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-darker),
+    inset 1px 1px 0 0 var(--win-light),
+    inset -2px -2px 0 0 var(--win-dark),
+    inset 2px 2px 0 0 var(--win-lighter);
+}
+
+.win-bevel.light {
+  padding: 1px;
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-dark),
+    inset 1px 1px 0 0 var(--win-lighter);
+}
+
+.win-bevel.light.inset,
+.win-bevel.light.inset-active:active,
+button.win-bevel.light:active {
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-lighter),
+    inset 1px 1px 0 0 var(--win-dark);
+}
+
+.win-bevel.bevel-alt {
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-darker),
+    inset 1px 1px 0 0 var(--win-lighter),
+    inset -2px -2px 0 0 var(--win-dark);
+}
+
+/* Theme components ========================================================= */
+
+/* "Desktop" */
+body {
+  background: var(--win-background);
+}
+
+/* Button */
+button.win-bevel {
+  padding: 4px 10px;
+}
+
+button.win-bevel.icon-button {
+  padding: 3px;
+}
+
+button.win-bevel > * {
+  display: block;
+}
+
+button.win-bevel:active > * {
+  transform: translate(1px, 1px);
+}
+
+/* Windows */
+.window {
+  gap: 1px;
+}
+
+.titlebar {
+  padding: 2px;
+
+  background: var(--win-title-inactive);
+  color: var(--win-base);
+}
+
+.titlebar-buttons button {
+  padding: 2px;
+}
+
+.window-icon {
+  width: 16px;
+  height: 16px;
+  margin: -1px 3px -1px 0;
+}
+
+.window-title {
+  padding: 1px 0;
+}
+
+.active-window .titlebar {
+  background: var(--win-title-active);
+  color: var(--win-lighter);
+}

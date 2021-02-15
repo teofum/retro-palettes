@@ -1,0 +1,212 @@
+/* Options Base ============================================================= */
+
+#setupWindowContent {
+  width: 306px;
+  max-width: 306px;
+}
+
+.options#advancedOptions {
+  margin-left: 46px;
+}
+
+.options input[type="radio"] {
+  margin-left: 16px;
+}
+
+/* File Input =============================================================== */
+
+.file-input {
+  grid-column: span 2;
+  padding: 2px;
+  max-width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-input .picker {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file-input .preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: black;
+}
+
+#canvasPreview {
+  max-width: 100%;
+  max-height: 200px;
+}
+
+/* Options Controls ========================================================= */
+
+.options {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+
+  padding: 2px;
+  max-width: 100%;
+}
+
+.option-label {
+  grid-column: 1 / span 1;
+}
+
+.option-control {
+  grid-column: 2 / span 1;
+}
+
+.option-control.flex {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.option-control.flex > :first-child {
+  flex-grow: 1;
+}
+
+.option-wide {
+  grid-column: 1 / span 2;
+
+  display: flex;
+  align-items: center;
+}
+
+.option-wide.inset {
+  padding-left: 16px;
+}
+
+/* Palette colors preview =================================================== */
+
+.palette-colors {
+  justify-self: end;
+
+  display: grid;
+  grid-template-columns: repeat(16, 16px);
+  grid-auto-rows: 16px;
+}
+
+/* Other bits */
+
+.slow-warning {
+  margin: 4px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.slow-warning.win-bevel {
+  padding: 8px 12px;
+  background-color: #ffff80;
+}
+
+.buttons {
+  width: 100%;
+  padding: 4px 2px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.canvas-container {
+  position: relative;
+  display: flex; /* Fixes a minor positioning issue */
+}
+
+.output-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  transition: clip-path 500ms ease;
+}
+
+.output-canvas.clip {
+  clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+}
+
+.flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  background-color: white;
+  opacity: 0;
+}
+
+.flash-anim {
+  animation: 350ms ease-out 0s 1 normal forwards running flash;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0.65; /*filter: contrast(10%) brightness(1.35);*/
+  }
+  100% {
+    opacity: 0; /*filter: contrast(100%) brightness(1);*/
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translate3d(0, 100000%, 0);
+  }
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 50%;
+  }
+}
+
+.crt-scanlines {
+  position: relative;
+  overflow: hidden;
+  filter: blur(0.65px) contrast(0.75) brightness(1.15) saturate(0.8) hue-rotate(5deg)
+}
+
+.crt-scanlines::before, .crt-scanlines::after {
+  display: block;
+  pointer-events: none;
+  content: '';
+  position: absolute;
+}
+
+.crt-scanlines::before {
+  width: 100%;
+  height: 2px;
+  z-index: 1000001;
+  background: rgba(0, 0, 0, 0.15);
+  opacity: 0.75;
+  animation: scanline 6s linear infinite;
+}
+
+.crt-scanlines::after {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000000;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.15) 51%);
+  background-size: 100% 4px;
+  animation: scanlines 1s steps(60) infinite;
+}

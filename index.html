@@ -4,85 +4,97 @@
 <head>
   <meta charset="utf8">
   <title>Colors</title>
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="styles/resets.css">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/window.css">
+  <link rel="stylesheet" href="styles/fake-checkbox.css">
+  <link rel="stylesheet" href="styles/fake-select.css">
+  <link rel="stylesheet" href="styles/theme/windows98.css">
   <link rel="shortcut icon" href="favicon.ico">
 </head>
 
 <body>
-  <div class="content">
+  <div id="setupWindowContent">
     <div class="options-container">
+      <div class="file-input">
+        <div class="picker">
+          <span id="imageName">No image selected</span>
+          <button class="win-bevel" id="browse">
+            <span>Browse...</span>
+          </button>
+        </div>
+
+        <div class="win-bevel inverted preview content" id="previewContainer" style="display: none;">
+          <canvas id="canvasPreview"></canvas>
+        </div>
+
+        <input hidden type="file" id="fileInput" accept="image/png, image/jpeg">
+      </div>
+
       <div class="options">
-        <div class="file-input">
-          <span>Choose a file</span>
-          <input type="file" id="fileInput" accept="image/png, image/jpeg">
-        </div>
+        <span class="option-label">Resize </span>
+        <input class="option-control win-bevel" type="text" name="resize" id="resizeInput" value="500">
 
-        <div class="controls">
-          <span>Resize to </span>
-          <input type="number" name="resize" id="resizeInput" value="500">
-        </div>
+        <span class="option-label">Palette </span>
+        <input class="option-control" type="text" name="palette" id="paletteSelect">
 
-        <div class="controls">
-          <span>Palette </span>
-          <select name="palette" id="paletteSelect"></select>
-        </div>
+        <div class="option-control palette-colors" id="paletteColors"></div>
 
-        <div class="controls">
-          <span>Process </span>
-          <select name="process" id="processSelect"></select>
+        <span class="option-label">Process </span>
+        <div class="option-control flex">
+          <input type="text" name="process" id="processSelect">
+
+          <button class="win-bevel icon-button" id="toggleAdvanced">
+            <img src="/public/img/advanced.png">
+          </button>
         </div>
       </div>
 
       <div class="options" id="advancedOptions" style="display: none;">
-        <div class="controls-wide"
+        <div class="option-wide"
           title="Enables gamma correction when available, greatly increasing contrast and color accuracy.">
           <input type="checkbox" name="featGamma" id="featGamma" checked>
           <label for="featGamma">Gamma correction</label>
         </div>
 
-        <div class="controls-wide"
+        <div class="option-wide"
           title="Allows any palette to be used with any process, regardless of performance impact.">
           <input type="checkbox" name="allowSlow" id="allowSlow">
           <label for="allowSlow">No palette/process restrictions</label>
         </div>
 
-        <div class="controls-wide"
+        <div class="option-wide"
           title="Enables the use of multiple CPU threads for faster processing.&#10;Some processes do not support multiple threads.">
           <input type="checkbox" name="featThreads" id="featThreads" checked>
           <label for="featThreads">Use threads</label>
         </div>
 
-        <div class="controls-wide"
+        <div class="option-wide inset"
           title="Attempts to balance processing time and CPU load, aiming for 3 to 10 second times.&#10;Auto mode is allowed to use up to half of the available CPU threads.">
           <input type="radio" name="threadMode" id="threadModeAuto" checked value="auto">
           <label for="threadModeAuto">Auto</label>
         </div>
 
-        <div class="controls"
+        <div class="option-wide inset"
           title="Allows manual control over the number of threads used.&#10;Using all available threads can and *will* max out your CPU. Proceed with caution.">
-          <span>
-            <input type="radio" name="threadMode" id="threadModeManual" value="manual">
-          </span>
-          <input type="number" name="threadCount" id="threadCount" value="2" disabled>
+          <input type="radio" name="threadMode" id="threadModeManual" value="manual">
+          <input class="win-bevel" type="text" name="threadCount" id="threadCount" value="2" disabled>
         </div>
       </div>
     </div>
 
-    <div class="slow-warning" id="slowWarning" style="display: none;">
-      Some palette and process combinations are disabled by default for performance reasons.
-      Using these options may result in extremely long processing times with large images.
+    <div class="slow-warning win-bevel inset" id="slowWarning" style="display: none;">
+      <img src="/public/img/warning.png" class="warning-icon">
+      <p>
+        Some palette and process combinations are disabled by default for performance reasons.<br>
+        Using these options may result in extremely long processing times with large images.
+      </p>
     </div>
 
     <div class="buttons">
-      <button id="toggleAdvanced">Show advanced options</button>
-      <button id="toggleOriginal">View original</button>
-      <button id="startStop">Start</button>
-    </div>
-
-    <div class="canvas-container">
-      <canvas id="canvasOriginal"></canvas>
-      <canvas id="canvasOutput"></canvas>
-      <div class="flash" id="flash"></div>
+      <button class="win-bevel" id="startStop" disabled>
+        <b>Start</b>
+      </button>
     </div>
   </div>
 

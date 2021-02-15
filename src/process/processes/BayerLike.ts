@@ -1,5 +1,5 @@
 import CompareFn from '../../color/CompareFn';
-import { ProcessFeatures } from '../../palette/applyPalette';
+import { ProcessFeatures } from '../../utils/RenderUtils';
 import Palette from '../../palette/Palette';
 import PaletteUtils from '../../palette/PaletteUtils';
 import { gammaCorrect, gammaUncorrect } from '../../utils/gamma';
@@ -146,7 +146,7 @@ function processBayer(fast: boolean = true): ProcessFn {
 
 export const BayerLikeFast: Process = {
   id: 'ProcBayerLikeFast',
-  name: 'Bayer-like – Fast',
+  name: 'Bayer-like - Fast',
   procFn: processBayer(),
 
   maxAllowedPaletteSize: 192,
@@ -159,7 +159,7 @@ export const BayerLikeFast: Process = {
 
 export const BayerLike: Process = {
   id: 'ProcBayerLikeThorough',
-  name: 'Bayer-like – High Quality',
+  name: 'Bayer-like - High Quality',
   procFn: processBayer(false),
 
   maxAllowedPaletteSize: 24,

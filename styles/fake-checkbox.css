@@ -1,0 +1,30 @@
+.win-bevel.checkbox.fake-checkbox {
+  display: inline-block;
+
+  width: 13px;
+  height: 13px;
+  margin-right: 4px;
+
+  background: white;
+  background-position: 2px 2px;
+}
+
+.fake-radio {
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+
+  background-image: url('/public/img/radio.png');
+}
+
+.fake-radio.checked {
+  background-image: url('/public/img/radio.c.png');
+}
+
+.fake-radio[disabled] {
+  background-image: url('/public/img/radio.d.png');
+}
+
+.fake-radio.checked[disabled] {
+  background-image: url('/public/img/radio.c.d.png');
+}

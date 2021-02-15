@@ -34,7 +34,7 @@ class PaletteUtils {
         return palette.data.slice(i * 3, i * 3 + 3);
       case PaletteType.Mono:
         return palette.data.slice(2, 5).map(vMax => {
-          const vMin = vMax * palette.data[1];
+          const vMin = ~~(vMax * palette.data[1]);
           const vRange = vMax - vMin;
           return vMin + i * ~~(vRange / (palette.data[0] - 1));
         });
@@ -92,7 +92,7 @@ class PaletteUtils {
       // Get max value, calculate min value, step, and value component
       color(i).forEach((vMax, j) => {
         if (sub) vMax = 255 - vMax;
-        const vMin = vMax * minValue(i);
+        const vMin = ~~(vMax * minValue(i));
         const vRange = vMax - vMin;
         const vChannel = vMin + step(i) * ~~(vRange / (levels(i) - 1));
         value[j] += sub ? (-vChannel) : vChannel;

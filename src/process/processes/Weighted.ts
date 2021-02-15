@@ -1,5 +1,5 @@
 import CompareFn from '../../color/CompareFn';
-import { ProcessFeatures } from '../../palette/applyPalette';
+import { ProcessFeatures } from '../../utils/RenderUtils';
 import Palette from '../../palette/Palette';
 import PaletteUtils from '../../palette/PaletteUtils';
 import { gammaCorrect, gammaUncorrectMC } from '../../utils/gamma';

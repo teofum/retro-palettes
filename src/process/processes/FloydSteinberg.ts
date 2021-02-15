@@ -10,7 +10,7 @@ const edMatrixFloydSteinberg: ErrorDiffusionMatrix = [
 
 const FloydSteinberg: Process = {
   id: 'ProcFloydSteinberg',
-  name: 'Floyd–Steinberg',
+  name: 'Floyd-Steinberg',
   procFn: processErrorDiffusion(edMatrixFloydSteinberg),
 
   maxAllowedPaletteSize: 65536,
