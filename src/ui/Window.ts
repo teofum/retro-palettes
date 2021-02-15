@@ -40,7 +40,7 @@ class UIWindow {
 
     // Create titlebar
     const closeIcon = document.createElement('img');
-    closeIcon.src = 'https://teofum.github.io/retro-palettes/public/img/close.png';
+    closeIcon.src = './public/img/close.png';
 
     const close = document.createElement('button');
     close.className = 'win-bevel';
