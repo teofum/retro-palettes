@@ -35,7 +35,12 @@
 
       <div class="options">
         <span class="option-label">Resize </span>
-        <input class="option-control win-bevel" type="text" name="resize" id="resizeInput" value="500">
+        <div class="option-control flex">
+          <input class="small win-bevel" type="text" name="resize" id="resizeInput" value="500">
+          <input type="checkbox" name="useScale" id="useScale">
+          <span>Scale </span>
+          <input class="small win-bevel" type="text" name="scale" id="scaleInput" value="2" disabled>
+        </div>
 
         <span class="option-label">Palette </span>
         <input class="option-control" type="text" name="palette" id="paletteSelect">

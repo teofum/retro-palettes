@@ -10,6 +10,7 @@ export interface RenderOptions {
   process: Process;
   threads: number | 'auto';
   features: ProcessFeatures;
+  scaling?: number;
 }
 
 export interface ImagePart {

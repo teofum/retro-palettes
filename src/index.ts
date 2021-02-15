@@ -49,6 +49,8 @@ const previewCanvas = document.getElementById('canvasPreview') as HTMLCanvasElem
 
 // Basic options
 const resizeInput = document.getElementById('resizeInput') as HTMLInputElement;
+const useScale = document.getElementById('useScale') as HTMLInputElement;
+const scaleInput = document.getElementById('scaleInput') as HTMLInputElement;
 const paletteSelect = document.getElementById('paletteSelect') as HTMLInputElement;
 const palettePreview = document.getElementById('paletteColors') as HTMLElement;
 const procSelect = document.getElementById('processSelect') as HTMLInputElement;
@@ -97,8 +99,15 @@ browse.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change',
   (ev: Event) => { loadFile(ev).then(img => onLoad(img)); });
 
-makeNumberInput(resizeInput);
 
+// ================================================================================================ \\
+// Resize/Scaling options ========================================================================== \\
+
+makeNumberInput(resizeInput);
+makeNumberInput(scaleInput);
+makeFakeCheckbox(useScale);
+
+useScale.addEventListener('change', () => scaleInput.disabled = !useScale.checked);
 
 // ================================================================================================ \\
 // Palette select ================================================================================== \\
@@ -237,11 +246,16 @@ function getRenderSize(): { w: number, h: number } {
 function start(): void {
   // Calculate the rnedered image size
   const renderSize = getRenderSize();
+  const scale = useScale.checked ? parseInt(scaleInput.value, 10) : undefined;
 
   // Create a new window
   const title = `Render: ${fileInput.files ? fileInput.files[0].name : 'untitled'}`
     + ` - ${selectedPalette.name}, ${selectedProcess.name}`
-    + ` @ ${renderSize.w}x${renderSize.h}`;
+    + ` @ ${renderSize.w}x${renderSize.h}`
+    + ` ${scale ? `(${scale}x)` : ''}`;
+
+  renderSize.w *= (scale || 1);
+  renderSize.h *= (scale || 1);
 
   const renderWindow = new RenderWindow(title, renderSize);
 
@@ -259,7 +273,8 @@ function start(): void {
     threads: threads,
     features: {
       gamma: featGamma.checked
-    }
+    },
+    scaling: useScale.checked ? parseInt(scaleInput.value, 10) : undefined
   }).then(() => {
     (startStop.children[0] as HTMLElement).innerText = 'Start';
     running = false;

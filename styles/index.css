@@ -70,6 +70,7 @@
   align-items: center;
 
   gap: 4px;
+  max-width: 256px;
 }
 
 .option-control.flex > :first-child {
@@ -85,6 +86,17 @@
 
 .option-wide.inset {
   padding-left: 16px;
+}
+
+input.small {
+  min-width: 0;
+  max-width: 100px;
+  flex-shrink: 1;
+}
+
+.option-control.flex .checkbox.fake-checkbox {
+  margin-right: 0;
+  margin-left: 4px;
 }
 
 /* Palette colors preview =================================================== */
