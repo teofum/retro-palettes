@@ -43,6 +43,14 @@
   white-space: nowrap;
 }
 
+.menubar {
+  grid-area: wa-menubar;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .window-content {
   grid-area: wa-content;
 }

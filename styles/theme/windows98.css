@@ -164,6 +164,10 @@ button.win-bevel.light:active {
     inset -2px -2px 0 0 var(--win-dark);
 }
 
+.win-bevel.hover:not(:hover) {
+  box-shadow: none;
+}
+
 /* Theme components ========================================================= */
 
 /* "Desktop" */
@@ -186,6 +190,17 @@ button.win-bevel > * {
 
 button.win-bevel:active > * {
   transform: translate(1px, 1px);
+}
+
+button.checkered:not(:hover) {
+  background-image:
+    linear-gradient(45deg, var(--win-lighter) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--win-lighter) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--win-lighter) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--win-lighter) 75%);
+
+  background-size: 2px 2px;
+  background-position: 0 0, 0 1px, 1px -1px, -1px 0;
 }
 
 /* Windows */
