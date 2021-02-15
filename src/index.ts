@@ -70,7 +70,7 @@ const slowWarning = document.getElementById('slowWarning') as HTMLElement;
 const setupWindowContent = document.getElementById('setupWindowContent') as HTMLElement;
 
 // Create setup window
-const setupWindow = new UIWindow('Render Setup', 'public/img/settings.png');
+const setupWindow = new UIWindow('Render Setup', 'https://teofum.github.io/retro-palettes/public/img/settings.png');
 setupWindow.content.classList.remove('win-bevel');
 setupWindow.content.appendChild(setupWindowContent);
 
