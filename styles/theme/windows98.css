@@ -13,7 +13,7 @@ button {
 
 @font-face {
   font-family: 'MS Sans 98';
-  src: url('./public/font/MS_Sans_Serif.ttf');
+  src: url('./font/MS_Sans_Serif.ttf');
 }
 
 :root {
