@@ -35,6 +35,8 @@ import PaletteType from './palette/PaletteType';
 import { makeFakeCheckbox } from './ui/makeFakeCheckbox';
 import { makeNumberInput } from './ui/makeNumberInput';
 import { makeFakeRadio } from './ui/makeFakeRadio';
+import prepPalette from './palette/prepPalette';
+import Palette from './palette/Palette';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -93,6 +95,7 @@ function onLoad(img: HTMLImageElement): void {
 
   // Clear the cache of generated palettes
   clearPaletteCache();
+  updatePaletteColors();
 }
 
 browse.addEventListener('click', () => fileInput.click());
@@ -318,8 +321,13 @@ function updatePaletteColors(): void {
   while (palettePreview.firstChild)
     palettePreview.removeChild(palettePreview.firstChild);
 
-  if (selectedPalette.type === PaletteType.Auto) return;
-  PaletteUtils.getColors(selectedPalette).forEach(color => {
+  // If an auto palette is selected, generate it now
+  // We don't need to keep it, as it will be automatically cached
+  const palette = (selectedPalette.type === PaletteType.Auto) ?
+    autoPaletteFromThumb() :
+    selectedPalette;
+
+  PaletteUtils.getColors(palette).forEach(color => {
     let cssColor = '#';
     for (let i = 0; i < 3; i++) {
       const channel = color[i].toString(16);
@@ -333,4 +341,27 @@ function updatePaletteColors(): void {
 
     palettePreview.appendChild(colorSquare);
   });
+}
+
+function autoPaletteFromThumb(): Palette {
+  const downscaled = document.createElement('canvas');
+  if (previewCanvas.width >= previewCanvas.height) {
+    downscaled.width = 240;
+    downscaled.height = 240 * (previewCanvas.height / previewCanvas.width);
+  } else {
+    downscaled.width = 240 * (previewCanvas.width / previewCanvas.height);
+    downscaled.height = 240;
+  }
+
+  const ctxDownscaled = downscaled.getContext('2d');
+  if (!ctxDownscaled) throw new Error('Unable to get downscaled context!');
+
+  ctxDownscaled.drawImage(previewCanvas, 0, 0, downscaled.width, downscaled.height);
+
+  const startTime = new Date().getTime();
+  const imageData = ctxDownscaled.getImageData(0, 0, downscaled.width, downscaled.height);
+  const autopalette = prepPalette(selectedPalette, selectedProcess, imageData);
+  console.log(`Palette processing done in ${new Date().getTime() - startTime}ms`);
+
+  return autopalette;
 }
