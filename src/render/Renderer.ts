@@ -105,13 +105,18 @@ class Renderer {
           const line = progress.current / (w * 4) * (options.scaling || 1);
 
           if (progress.partial) {
-            ctxOut.putImageData(progress.partial.data, ox, 0);
-            if (options.scaling)
+            if (options.scaling) {
+              ctxOut.putImageData(
+                progress.partial.data,
+                ox, 0,
+                0, 0, w, progress.current / (w * 4)
+              );
               ctxOut.drawImage(
                 this.outputCanvas,
                 ox, 0, w, progress.current / (w * 4),
                 ox, 0, ow, line
               );
+            } else ctxOut.putImageData(progress.partial.data, ox, 0);
           }
 
           ctxOut.fillStyle = '#ff00ff';
