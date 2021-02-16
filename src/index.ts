@@ -9,7 +9,7 @@ import Win20cEx from './palette/palettes/Win20cEx';
 import ZX4bRGBI from './palette/palettes/ZX4bRGBI';
 import { GameBoy } from './palette/palettes/Gameboy';
 import NES56 from './palette/palettes/NES';
-import { RGB16, RGB256, RGB64, RGB8 } from './palette/palettes/RGB';
+import { RGB16, RGB256, RGB32, RGB64, RGB8 } from './palette/palettes/RGB';
 import { Mono2A, Mono2G, Mono2W, Mono4A, Mono4W, Mono16 } from './palette/palettes/Mono';
 import { DuoBY2, DuoGM2, DuoOG2, DuoGM1, DuoRC2, DuoWA2, DuoOB2 } from './palette/palettes/Duo';
 import { CMYK16, CMYK64, CMYK256, CMYKU1, CMYKU2, CMYKU4 } from './palette/palettes/CMYK';
@@ -119,7 +119,7 @@ const palettes = [
   GameBoy, NES56,
   Mono2W, Mono2G, Mono2A, Mono4W, Mono4A, Mono16,
   DuoGM1, DuoRC2, DuoGM2, DuoBY2, DuoWA2, DuoOG2, DuoOB2,
-  RGB8, RGB16, RGB64, RGB256,
+  RGB8, RGB16, RGB32, RGB64, RGB256,
   CMYKU1, CMYKU2, CMYKU4, CMYK16, CMYK64, CMYK256,
   Auto16, Auto64, Auto256
 ];

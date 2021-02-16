@@ -16,6 +16,13 @@ export const RGB16: Palette = {
   data: [2, 4, 2]
 };
 
+export const RGB32: Palette = {
+  name: '32-color RGB (5-bit, 2-2-1)',
+  type: PaletteType.RGB,
+  group: PaletteGroup.RGB,
+  data: [4, 4, 2]
+};
+
 export const RGB64: Palette = {
   name: '64-color RGB (6-bit, 2bpc)',
   type: PaletteType.RGB,
