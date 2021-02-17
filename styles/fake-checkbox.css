@@ -5,8 +5,23 @@
   height: 13px;
   margin-right: 4px;
 
-  background: white;
   background-position: 2px 2px;
+}
+
+.win-bevel.checkbox.fake-checkbox {
+  background-image: url('../public/img/check.png');
+}
+
+.win-bevel.checkbox.fake-checkbox.checked {
+  background-image: url('../public/img/check.c.png');
+}
+
+.win-bevel.checkbox.fake-checkbox[disabled] {
+  background-image: url('../public/img/check.d.png');
+}
+
+.win-bevel.checkbox.fake-checkbox.checked[disabled] {
+  background-image: url('../public/img/check.c.d.png');
 }
 
 .fake-radio {
