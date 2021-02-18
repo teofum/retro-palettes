@@ -97,6 +97,7 @@ class PaletteUtils {
         const vChannel = vMin + step(i) * ~~(vRange / (levels(i) - 1));
         value[j] += sub ? (-vChannel) : vChannel;
         if (value[j] < 0) value[j] = 0;
+        if (value[j] > 255) value[j] = 255;
       });
     }
     return value;
