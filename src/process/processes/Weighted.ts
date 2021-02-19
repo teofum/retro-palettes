@@ -103,12 +103,12 @@ const ColorThresholdMatrix: Process = {
   name: 'Color Threshold Matrix',
   procFn: processColorThreshold,
 
-  maxAllowedPaletteSize: 64,
+  maxAllowedPaletteSize: 256,
   supports: {
     threads: true,
     gamma: true
   },
-  complexity: (n) => (n * 384) // Based on worst case of O(n * 64 * log₂64), actual execution should be much faster
+  complexity: (n) => (n * 64) // Based on worst case of O(n * 16 * log₂16), actual execution should be much faster
 };
 
 export default ColorThresholdMatrix;

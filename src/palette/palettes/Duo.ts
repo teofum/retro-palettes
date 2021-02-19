@@ -78,3 +78,14 @@ export const DuoOB2: Palette = {
     4, 0, 15, 45, 135
   ]
 };
+
+export const DuoCM2: Palette = {
+  name: 'Cyan/Magenta (4-bit, 2bpc)',
+  type: PaletteType.Mixer,
+  group: PaletteGroup.Duo,
+  data: [
+    2, 0, 0, 0,
+    4, 0, 0, 186, 255,
+    4, 0, 255, 0, 151
+  ]
+};
