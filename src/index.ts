@@ -37,6 +37,8 @@ import { makeNumberInput } from './ui/makeNumberInput';
 import { makeFakeRadio } from './ui/makeFakeRadio';
 import prepPalette from './palette/prepPalette';
 import Palette from './palette/Palette';
+import PaletteGroup from './palette/PaletteGroup';
+import setFakeSelectOptions from './ui/setFakeSelectOptions';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -53,6 +55,7 @@ const previewCanvas = document.getElementById('canvasPreview') as HTMLCanvasElem
 const resizeInput = document.getElementById('resizeInput') as HTMLInputElement;
 const useScale = document.getElementById('useScale') as HTMLInputElement;
 const scaleInput = document.getElementById('scaleInput') as HTMLInputElement;
+const paletteGroupSelect = document.getElementById('paletteGroupSelect') as HTMLInputElement;
 const paletteSelect = document.getElementById('paletteSelect') as HTMLInputElement;
 const palettePreview = document.getElementById('paletteColors') as HTMLElement;
 const procSelect = document.getElementById('processSelect') as HTMLInputElement;
@@ -128,14 +131,45 @@ const palettes = [
 ];
 let selectedPalette = Win4bRGBI;
 paletteSelect.value = selectedPalette.name;
+paletteGroupSelect.value = selectedPalette.group;
 updatePaletteColors();
 
-makeFakeSelect(paletteSelect,
-  palettes.map(p => ({ name: p.name, value: p })),
+const paletteSelectRef = makeFakeSelect(paletteSelect,
+  palettes
+    .filter(p => p.group === paletteGroupSelect.value)
+    .map(p => ({ name: p.name, value: p })),
   (selected) => {
     selectedPalette = selected.value;
     updateEnabledProcs();
     updatePaletteColors();
+  }
+);
+
+makeFakeSelect(paletteGroupSelect,
+  Object.keys(PaletteGroup)
+    .map(k => {
+      // Awful hack, TypeScript really needs a clean way to list an Enum's values
+      const value = ((PaletteGroup as any)[k as string] as string);
+      return { name: value, value: value };
+    })
+    .filter(opt => !opt.value.startsWith('__')), // Filter out hidden palette groups
+  (selected) => {
+    console.log(selected);
+    console.log(paletteSelectRef);
+
+    setFakeSelectOptions(
+      paletteSelectRef,
+      palettes
+        .filter(p => p.group === selected.value)
+        .map(p => ({ name: p.name, value: p }))
+    );
+
+    // Select the first option in the group
+    const firstOption = paletteSelectRef.optionList.firstChild as HTMLElement;
+    if (firstOption) {
+      firstOption.click();
+      firstOption.click(); // Second click closes the select
+    }
   }
 );
 

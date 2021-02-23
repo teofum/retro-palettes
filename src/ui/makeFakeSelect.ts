@@ -5,11 +5,17 @@ export interface FakeSelectOption {
 
 export type FakeSelectEventHandler = (picked: FakeSelectOption) => void;
 
+export interface FakeSelectRef {
+  input: HTMLInputElement;
+  optionList: HTMLElement;
+  onchange: FakeSelectEventHandler;
+}
+
 export function makeFakeSelect(
   input: HTMLInputElement,
   options: FakeSelectOption[],
   onchange: FakeSelectEventHandler
-): void {
+): FakeSelectRef {
   // Create a list to hold the options
   const selectList = document.createElement('ul');
   selectList.className = 'fake-select-option-list';
@@ -70,4 +76,10 @@ export function makeFakeSelect(
   input.style.userSelect = 'none';
   input.style.cursor = 'default';
   input.disabled = true;
+
+  return {
+    input: input,
+    optionList: selectList,
+    onchange: onchange
+  };
 }
