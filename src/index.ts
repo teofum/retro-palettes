@@ -152,7 +152,10 @@ makeFakeSelect(paletteGroupSelect,
       const value = ((PaletteGroup as any)[k as string] as string);
       return { name: value, value: value };
     })
-    .filter(opt => !opt.value.startsWith('__')), // Filter out hidden palette groups
+    .filter(opt => // Filter out hidden and empty palette groups
+      !opt.value.startsWith('__') &&
+      palettes.filter(p => p.group === opt.value).length > 0
+    ),
   (selected) => {
     setFakeSelectOptions(
       paletteSelectRef,
