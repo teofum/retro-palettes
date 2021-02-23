@@ -154,21 +154,27 @@ makeFakeSelect(paletteGroupSelect,
     })
     .filter(opt => !opt.value.startsWith('__')), // Filter out hidden palette groups
   (selected) => {
-    console.log(selected);
-    console.log(paletteSelectRef);
-
     setFakeSelectOptions(
       paletteSelectRef,
       palettes
         .filter(p => p.group === selected.value)
         .map(p => ({ name: p.name, value: p }))
     );
+    updateEnabledPalettes();
 
-    // Select the first option in the group
-    const firstOption = paletteSelectRef.optionList.firstChild as HTMLElement;
-    if (firstOption) {
-      firstOption.click();
-      firstOption.click(); // Second click closes the select
+    // Select the first enabled option in the group
+    const options = paletteSelectRef.optionList.children;
+    let firstEnabled: HTMLElement | undefined;
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].getAttribute('disabled') === null) {
+        firstEnabled = options[i] as HTMLElement;
+        break;
+      }
+    }
+
+    if (firstEnabled) {
+      firstEnabled.click();
+      firstEnabled.click(); // Second click closes the select
     }
   }
 );
