@@ -24,3 +24,8 @@ ul.edit-color-list {
   width: 44px;
   height: 22px;
 }
+
+.edit-rename {
+  min-width: 200px;
+  width: 350px;
+}

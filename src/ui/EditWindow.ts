@@ -36,14 +36,10 @@ class EditWindow extends UIWindow {
     addColorButton.appendChild(addColorIcon);
     addColorButton.addEventListener('click',
       () => this.addColor([0, 0, 0]));
-
-    const divider = document.createElement('div');
-    divider.className = 'win-bevel light divider';
       
     const menuBar = document.createElement('div');
     menuBar.className = 'menubar';
     menuBar.appendChild(this.renameInput);
-    menuBar.appendChild(divider);
     menuBar.appendChild(addColorButton);
 
     this.frame.appendChild(menuBar);

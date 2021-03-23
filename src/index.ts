@@ -63,6 +63,7 @@ const paletteSelect = document.getElementById('paletteSelect') as HTMLInputEleme
 const palettePreview = document.getElementById('paletteColors') as HTMLElement;
 const procSelect = document.getElementById('processSelect') as HTMLInputElement;
 const btnCreatePalette = document.getElementById('createPalette') as HTMLButtonElement;
+const btnCopyPalette = document.getElementById('copyPalette') as HTMLButtonElement;
 const btnEditPalette = document.getElementById('editPalette') as HTMLButtonElement;
 
 // Advanced options
@@ -180,12 +181,15 @@ const editPalette = (palette: Palette): void => {
   }
 };
 
-const createCustomPalette = (): void => {
+const createCustomPalette = (
+  name: string = 'Custom Palette',
+  data: number[] = [0, 0, 0, 255, 255, 255]
+): void => {
   const newPalette: Palette = {
-    name: 'Custom Palette',
+    name: name,
     type: PaletteType.Indexed,
     group: PaletteGroup.User,
-    data: [0, 0, 0, 255, 255, 255]
+    data: data
   };
 
   palettes.push(newPalette);
@@ -221,11 +225,18 @@ const selectPalGroup = (group: PaletteGroup): void => {
     firstEnabled.click();
     firstEnabled.click(); // Second click closes the select
   }
+
+  // Special handling for a selection handled programatically,
+  // makes sure the right option is displayed
+  if (paletteGroupSelect.value !== group)
+    paletteGroupSelect.value = group;
 };
 
 let editWindow: EditWindow | undefined;
 btnEditPalette.addEventListener('click', () => editPalette(selectedPalette));
 btnCreatePalette.addEventListener('click', () => createCustomPalette());
+btnCopyPalette.addEventListener('click',
+  () => createCustomPalette(`${selectedPalette.name} Copy`, selectedPalette.data));
 
 const paletteSelectRef = makeFakeSelect(paletteSelect,
   palettes
