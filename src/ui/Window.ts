@@ -46,7 +46,7 @@ class UIWindow {
     closeIcon.src = './public/img/close.png';
 
     const close = document.createElement('button');
-    close.className = 'win-bevel';
+    close.className = 'win-bevel close';
     close.appendChild(closeIcon);
 
     const titleButtons = document.createElement('div');

@@ -88,6 +88,10 @@ const setupWindow = new UIWindow('Render Setup', './public/img/settings.png');
 setupWindow.content.classList.remove('win-bevel');
 setupWindow.content.appendChild(setupWindowContent);
 
+// Disable closing the setup window
+const setupClose = setupWindow.frame.getElementsByClassName('close').item(0);
+if (setupClose) setupClose.setAttribute('disabled', 'true');
+
 // ================================================================================================ \\
 // File Input ====================================================================================== \\
 
