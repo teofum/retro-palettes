@@ -20,6 +20,9 @@ class UIWindow {
   public get title(): string { return this.titleRef.innerText; }
   public set title(value: string) { this.titleRef.innerText = value; }
 
+  public oninit?: () => void;
+  public ondestroy?: () => void;
+
   constructor(title: string, iconUrl?: string) {
     // Assign a unique ID (probably not thread safe, so... don't)
     this.uuid = UIWindow.lastId++;
@@ -75,6 +78,8 @@ class UIWindow {
     document.body.appendChild(frame);
     UIWindow.windowList.push(this);
     this.focus();
+
+    if (this.oninit) this.oninit();
   }
 
   public focus = (): void => {
@@ -91,6 +96,8 @@ class UIWindow {
   }
 
   public destroy = (): void => {
+    if (this.ondestroy) this.ondestroy();
+
     // Remove from window list
     const thisIndex = UIWindow.windowList.indexOf(this);
     UIWindow.windowList.splice(thisIndex, 1);

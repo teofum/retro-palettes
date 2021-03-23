@@ -24,21 +24,24 @@ import ColorThresholdMatrix from './process/processes/Weighted';
 
 // Utils and functions
 import { clearPaletteCache } from './palette/AutoPalette';
-import { loadFile } from './utils/utils';
+import { color2hex, loadFile } from './utils/utils';
 import { initGammaLUT } from './utils/gamma';
 import PaletteUtils from './palette/PaletteUtils';
 import RenderWindow from './ui/RenderWindow';
 import { terminateAllWorkers, threadsAvailable } from './render/Renderer';
 import UIWindow from './ui/Window';
-import { makeFakeSelect } from './ui/makeFakeSelect';
+import { makeFakeSelect } from './ui/controls/makeFakeSelect';
 import PaletteType from './palette/PaletteType';
-import { makeFakeCheckbox } from './ui/makeFakeCheckbox';
-import { makeNumberInput } from './ui/makeNumberInput';
-import { makeFakeRadio } from './ui/makeFakeRadio';
+import { makeFakeCheckbox } from './ui/controls/makeFakeCheckbox';
+import { makeNumberInput } from './ui/controls/makeNumberInput';
+import { makeFakeRadio } from './ui/controls/makeFakeRadio';
 import prepPalette from './palette/prepPalette';
 import Palette from './palette/Palette';
 import PaletteGroup from './palette/PaletteGroup';
-import setFakeSelectOptions from './ui/setFakeSelectOptions';
+import setFakeSelectOptions from './ui/controls/setFakeSelectOptions';
+import { Custom } from './palette/palettes/Custom';
+import EditWindow from './ui/EditWindow';
+import { Process } from './process/Process';
 
 // ================================================================================================ \\
 // Initialization ================================================================================== \\
@@ -59,6 +62,8 @@ const paletteGroupSelect = document.getElementById('paletteGroupSelect') as HTML
 const paletteSelect = document.getElementById('paletteSelect') as HTMLInputElement;
 const palettePreview = document.getElementById('paletteColors') as HTMLElement;
 const procSelect = document.getElementById('processSelect') as HTMLInputElement;
+const btnCreatePalette = document.getElementById('createPalette') as HTMLButtonElement;
+const btnEditPalette = document.getElementById('editPalette') as HTMLButtonElement;
 
 // Advanced options
 const advancedOptDiv = document.getElementById('advancedOptions') as HTMLElement;
@@ -127,22 +132,106 @@ const palettes = [
   DuoGM1, DuoRC2, DuoGM2, DuoBY2, DuoWA2, DuoOG2, DuoOB2, DuoCM2,
   RGB8, RGB16, RGB32, RGB64, RGB256,
   CMYKU1, CMYKU2, CMYKU4, CMYK16, CMYK64, CMYK256,
-  Auto16, Auto64, Auto256
+  Auto16, Auto64, Auto256,
+  Custom
 ];
 let selectedPalette = Win4bRGBI;
 paletteSelect.value = selectedPalette.name;
 paletteGroupSelect.value = selectedPalette.group;
 updatePaletteColors();
 
+const selectPalette = (palette: Palette): void => {
+  selectedPalette = palette;
+  updateEnabledProcs();
+  updatePaletteColors();
+
+  selectedPalette.group === PaletteGroup.User ?
+    btnEditPalette.style.removeProperty('display') :
+    btnEditPalette.style.setProperty('display', 'none');
+
+  // Special handling for a selection handled programatically,
+  // makes sure the right option is displayed
+  if (paletteSelect.value !== selectedPalette.name)
+    paletteSelect.value = selectedPalette.name;
+};
+
+const editPalette = (palette: Palette): void => {
+  if (!editWindow) {
+    editWindow = new EditWindow(palette);
+    editWindow.onchange = updatePaletteColors;
+    editWindow.onnamechange = changedPalette => {
+      // Refresh the palette list if it's currently selected
+      if (selectedPalette.group === PaletteGroup.User) {
+        setFakeSelectOptions(
+          paletteSelectRef,
+          palettes
+            .filter(p => p.group === PaletteGroup.User)
+            .map(p => ({ name: p.name, value: p }))
+        );
+
+        // Update the displayed name as well if the changed palette is selected
+        if (changedPalette === selectedPalette)
+          paletteSelect.value = changedPalette.name;
+      }
+    };
+    editWindow.ondestroy = () => editWindow = undefined; // Reset reference
+  } else {
+    editWindow.loadCustomPalette(palette);
+  }
+};
+
+const createCustomPalette = (): void => {
+  const newPalette: Palette = {
+    name: 'Custom Palette',
+    type: PaletteType.Indexed,
+    group: PaletteGroup.User,
+    data: [0, 0, 0, 255, 255, 255]
+  };
+
+  palettes.push(newPalette);
+  selectPalGroup(PaletteGroup.User); // Reload palette group so the new palette appears in dropdown
+  selectPalette(newPalette);
+  editPalette(selectedPalette);
+};
+
+const selectPalGroup = (group: PaletteGroup): void => {
+  setFakeSelectOptions(
+    paletteSelectRef,
+    palettes
+      .filter(p => p.group === group)
+      .map(p => ({ name: p.name, value: p }))
+  );
+  updateEnabledPalettes();
+
+  group === PaletteGroup.User ?
+    btnCreatePalette.style.removeProperty('display') :
+    btnCreatePalette.style.setProperty('display', 'none');
+
+  // Select the first enabled option in the group
+  const options = paletteSelectRef.optionList.children;
+  let firstEnabled: HTMLElement | undefined;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].getAttribute('disabled') === null) {
+      firstEnabled = options[i] as HTMLElement;
+      break;
+    }
+  }
+
+  if (firstEnabled) {
+    firstEnabled.click();
+    firstEnabled.click(); // Second click closes the select
+  }
+};
+
+let editWindow: EditWindow | undefined;
+btnEditPalette.addEventListener('click', () => editPalette(selectedPalette));
+btnCreatePalette.addEventListener('click', () => createCustomPalette());
+
 const paletteSelectRef = makeFakeSelect(paletteSelect,
   palettes
     .filter(p => p.group === paletteGroupSelect.value)
     .map(p => ({ name: p.name, value: p })),
-  (selected) => {
-    selectedPalette = selected.value;
-    updateEnabledProcs();
-    updatePaletteColors();
-  }
+  (selected) => selectPalette(selected.value)
 );
 
 makeFakeSelect(paletteGroupSelect,
@@ -156,30 +245,7 @@ makeFakeSelect(paletteGroupSelect,
       !opt.value.startsWith('__') &&
       palettes.filter(p => p.group === opt.value).length > 0
     ),
-  (selected) => {
-    setFakeSelectOptions(
-      paletteSelectRef,
-      palettes
-        .filter(p => p.group === selected.value)
-        .map(p => ({ name: p.name, value: p }))
-    );
-    updateEnabledPalettes();
-
-    // Select the first enabled option in the group
-    const options = paletteSelectRef.optionList.children;
-    let firstEnabled: HTMLElement | undefined;
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].getAttribute('disabled') === null) {
-        firstEnabled = options[i] as HTMLElement;
-        break;
-      }
-    }
-
-    if (firstEnabled) {
-      firstEnabled.click();
-      firstEnabled.click(); // Second click closes the select
-    }
-  }
+  (selected) => selectPalGroup(selected.value)
 );
 
 
@@ -327,6 +393,10 @@ function start(): void {
   });
 }
 
+function combinationAllowed(palette: Palette, process: Process): boolean {
+  return palette.group === PaletteGroup.User || PaletteUtils.getSize(palette) < process.maxAllowedPaletteSize;
+}
+
 function updateEnabledProcs(): void {
   // Disable slow processes for large palettes
   const procOpts = procSelect.parentElement?.getElementsByClassName('fake-select-option');
@@ -336,7 +406,7 @@ function updateEnabledProcs(): void {
     const option = procOpts[i] as HTMLElement;
     const process = processes.find(proc => proc.name === option.innerText);
     if (process) {
-      if (!allowSlow.checked && process.maxAllowedPaletteSize < PaletteUtils.getSize(selectedPalette))
+      if (!allowSlow.checked && !combinationAllowed(selectedPalette, process))
         option.setAttribute('disabled', 'true');
       else option.removeAttribute('disabled');
     }
@@ -352,7 +422,7 @@ function updateEnabledPalettes(): void {
     const option = paletteOpts[i] as HTMLElement;
     const palette = palettes.find(pal => pal.name === option.innerText);
     if (palette) {
-      if (!allowSlow.checked && selectedProcess.maxAllowedPaletteSize < PaletteUtils.getSize(palette))
+      if (!allowSlow.checked && !combinationAllowed(palette, selectedProcess))
         option.setAttribute('disabled', 'true');
       else option.removeAttribute('disabled');
     }
@@ -371,11 +441,7 @@ function updatePaletteColors(): void {
     selectedPalette;
 
   PaletteUtils.getColors(palette).forEach(color => {
-    let cssColor = '#';
-    for (let i = 0; i < 3; i++) {
-      const channel = color[i].toString(16);
-      cssColor += (channel.length === 1 ? '0' + channel : channel);
-    }
+    const cssColor = color2hex(color);
 
     const colorSquare = document.createElement('div');
     colorSquare.className = 'win-bevel content';

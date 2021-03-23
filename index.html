@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles/resets.css">
   <link rel="stylesheet" href="styles/index.css">
   <link rel="stylesheet" href="styles/window.css">
+  <link rel="stylesheet" href="styles/edit-window.css">
   <link rel="stylesheet" href="styles/fake-checkbox.css">
   <link rel="stylesheet" href="styles/fake-select.css">
   <link rel="stylesheet" href="styles/theme/windows98.css">
@@ -44,7 +45,17 @@
 
         <span class="option-label">Palette </span>
         <input class="option-control" type="text" name="paletteGroup" id="paletteGroupSelect">
-        <input class="option-control" type="text" name="palette" id="paletteSelect">
+        <div class="option-control flex">
+          <input type="text" name="palette" id="paletteSelect">
+
+          <button class="win-bevel icon-button" id="createPalette" style="display: none;">
+            <img src="./public/img/new.png">
+          </button>
+
+          <button class="win-bevel icon-button" id="editPalette" style="display: none;">
+            <img src="./public/img/color.png">
+          </button>
+        </div>
 
         <div class="option-control palette-colors" id="paletteColors"></div>
 

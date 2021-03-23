@@ -1,0 +1,26 @@
+ul.edit-color-list {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-auto-flow: row;
+
+  padding: 2px;
+  gap: 4px 8px;
+}
+
+.edit-color-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.edit-color-item input {
+  width: 80px;
+  text-transform: uppercase;
+
+  margin-right: 4px;
+}
+
+.edit-preview {
+  width: 44px;
+  height: 22px;
+}

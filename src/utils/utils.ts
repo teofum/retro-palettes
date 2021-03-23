@@ -24,3 +24,26 @@ export const loadFile = (e: Event): Promise<HTMLImageElement> => {
 export const getComplexityRating = (process: Process, palette: Palette): number => {
   return process.complexity(PaletteUtils.getSize(palette));
 };
+
+export const color2hex = (color: number[]): string => {
+  let cssColor = '#';
+  for (let i = 0; i < 3; i++) {
+    const channel = color[i].toString(16);
+    cssColor += (channel.length === 1 ? '0' + channel : channel);
+  }
+
+  return cssColor;
+};
+
+export const hex2color = (hex: string): number[] => {
+  if (!hex.match(/^#[0-9a-fA-F]{6}$/g))
+    throw new Error('Input is not a valid 24-bit hexadecimal value.');
+
+  const color = [0, 0, 0];
+  for (let i = 0; i < 3; i++) {
+    const channel = hex.substr(i * 2 + 1, 2);
+    color[i] = parseInt(channel, 16);
+  }
+
+  return color;
+};

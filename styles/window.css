@@ -51,6 +51,13 @@
   align-items: center;
 }
 
+.menubar .divider {
+  height: 22px;
+  width: 2px;
+
+  margin: 0 2px;
+}
+
 .window-content {
   grid-area: wa-content;
 }

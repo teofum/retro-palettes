@@ -168,6 +168,12 @@ button.win-bevel.light:active {
   box-shadow: none;
 }
 
+.win-bevel.divider {
+  box-shadow:
+    inset -1px 0px 0 0 var(--win-lighter),
+    inset 1px 0px 0 0 var(--win-dark);
+}
+
 /* Theme components ========================================================= */
 
 /* "Desktop" */
@@ -232,4 +238,8 @@ button.checkered:not(:hover) {
 .active-window .titlebar {
   background: var(--win-title-active);
   color: var(--win-lighter);
+}
+
+.icon-button[disabled] > img {
+  filter: grayscale(1);
 }
