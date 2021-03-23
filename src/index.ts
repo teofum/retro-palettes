@@ -90,7 +90,10 @@ setupWindow.content.appendChild(setupWindowContent);
 
 // Disable closing the setup window
 const setupClose = setupWindow.frame.getElementsByClassName('close').item(0);
-if (setupClose) setupClose.setAttribute('disabled', 'true');
+if (setupClose) {
+  setupClose.setAttribute('disabled', 'true');
+  (setupClose as HTMLElement).style.setProperty('display', 'none');
+}
 
 // ================================================================================================ \\
 // File Input ====================================================================================== \\
